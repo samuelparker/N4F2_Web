@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'n4f2.apps.N4F2Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
