@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 from dateutil import parser
 from pytz import timezone
-import requests, pytz, pdb, os, os.path, sys, re, struct, copy, time, shutil
+import requests, pytz, pdb, os, os.path, sys, re, struct, copy, time, shutil, feedAPIparseFunction
 
 
 
@@ -12,8 +12,14 @@ pacific = timezone('US/Pacific')
 now = datetime.utcnow() - timedelta(days = 1)
 # now = datetime.utcnow() - timedelta(days = 7)
 
-dontReport = datetime.utcnow() - timedelta(days = 90)
+dontReport = datetime.utcnow() - timedelta(days = 30)
 
+openIgnoreList = open('ignoreList.txt')
+ignoreList = openIgnoreList.readlines()
+openIgnoreList.close()
+
+for index in range(len(ignoreList)):
+	ignoreList[index] = ignoreList[index].rstrip('\n')
 
 
 feedJson = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog').json()
@@ -27,13 +33,20 @@ postponed = []
 
 i = 0
 while i < len(feedJson):
+	yes = 0
+	for index in range(len(ignoreList)):
+		if feedJson[i]['siteName'] == ignoreList[index]:
+			i += 1
+			yes = 1
+	if yes == 1:
+		continue
 	if feedJson[i]['siteName'].startswith('ZZZ') or feedJson[i]['siteName'].startswith('YYY') or feedJson[i]['siteName'].startswith('Storre'):
 		i += 1
 	else:
 		feedName, feedProfile = feedJson[i]['feedName'].split(' using profile ')
 		feedRuns[feedJson[i]['runId']] = {
 			'feedName': feedName,
-			'feedProfile': feedProfile,
+			'feedProfile': feedProfile.rstrip('\n'),
 			'statusCode': feedJson[i]['statusCode'],
 			'statusSummary': feedJson[i]['statusSummary'],
 			'lastReceived': feedJson[i]['lastReceived'],
@@ -44,7 +57,7 @@ while i < len(feedJson):
 		if feedJson[i]['lastReceived'] < now.strftime(utcTimeFormat):
 			if feedJson[i]['lastReceived'] > dontReport.strftime(utcTimeFormat):
 				late.append(feedJson[i]['runId'])
-		if feedJson[i]['statusCode'] == 'ERROR':
+		if feedJson[i]['statusCode'] == 'ERROR' or feedJson[i]['statusCode'] == 'COMPLETE_WITH_FATAL_ERRORS':
 			error.append(feedJson[i]['runId'])
 		if feedJson[i]['statusCode'] == 'INTERRUPTED':
 			interupt.append(feedJson[i]['runId'])
@@ -54,115 +67,69 @@ while i < len(feedJson):
 			postponed.append(feedJson[i]['runId'])
 		i += 1
 
+for index in range(len(error)):
+	try:
+		late.remove(error[index])
+	except ValueError:
+		continue
+	else:
+		continue
 
 print(len(late))
-print(late[0])
-
-# testTime = time.asctime(time.localtime(feedRuns[late[j]]['lastReceived']))
-# pdb.set_trace()
 
 localtime = time.asctime(time.localtime(time.time()))
-filename = 'Feed Runs '+ localtime + '.txt'
+filename = 'Feed Runs '+ localtime
 filename = filename.replace(' ', '_')
 filename = filename.replace(':', '_')
 fileNameSplit = filename.split('_')
 fileNameSplit.pop(8)
 fileNameSplit.pop(7)
 fileNameSplit.pop(6)
+fileNameSplit.pop(4)
 filename = '_'.join(fileNameSplit)
-filename = filename.replace('__', '_')
+filename = filename.replace('_', " ")
+
 
 print(filename)
-feedCheck = open(filename, 'w+')
+feedCheck = open('index.html', 'w+')
 
-if len(error) >= 1:
-	j = 0
-	feedCheck.write(str(len(error)) + ' feeds in ERROR state.\n')
-	while j < len(error):
-		runId = str(error[j])
-		siteName = feedRuns[error[j]]['siteName']
-		feedProfile = feedRuns[error[j]]['feedProfile']
-		feedName = feedRuns[error[j]]['feedName']
-		statusCode = feedRuns[error[j]]['statusCode']
-		statusSummary = feedRuns[error[j]]['statusSummary']
-		lastReceived = feedRuns[error[j]]['lastReceived']
-		if feedRuns[error[j]]['lastSuccess'] == None:
-			lastSuccess = 'NO PRIOR SUCESS.'
-		else:
-			lastSuccess = feedRuns[error[j]]['lastSuccess']
-		runLink = feedRuns[error[j]]['runLink']
-
-		feedCheck.write('\t' + runId +': {\t\'siteName\': ' + siteName + '\n')
-		feedCheck.write('\t\t\t\t\'feedName\': ' + feedName + '\n')
-		feedCheck.write('\t\t\t\t\'feedProfile\': ' + feedProfile +'\n')
-		feedCheck.write('\t\t\t\t\'statusCode\': ' + statusCode + '\n')
-		feedCheck.write('\t\t\t\t\'statusSummary\': ' + statusSummary + '\n')
-		feedCheck.write('\t\t\t\t\'lastReceived\': ' + lastReceived + '\n')
-		feedCheck.write('\t\t\t\t\'lastSuccess\': ' + lastSuccess + '\n')
-		feedCheck.write('\t\t\t\t\'runLink\': ' + runLink + '\n')
-		feedCheck.write('\t\t\t }' + '\n')
-		j += 1
-
-if len(error) >= 1:
-	feedCheck.write('\n\n\n')
-
-if len(postponed) >= 1:
-	k = 0
-	feedCheck.write(str(len(postponed)) + ' postponed feeds.\n')
-	while k < len(postponed):
-		runId = str(postponed[k])
-		siteName = feedRuns[postponed[k]]['siteName']
-		feedProfile = feedRuns[postponed[k]]['feedProfile']
-		feedName = feedRuns[postponed[k]]['feedName']
-		statusCode = feedRuns[postponed[k]]['statusCode']
-		statusSummary = feedRuns[postponed[k]]['statusSummary']
-		lastReceived = feedRuns[postponed[k]]['lastReceived']
-		if feedRuns[postponed[k]]['lastSuccess'] == None:
-			lastSuccess = 'NO PRIOR SUCESS.'
-		else:
-			lastSuccess = feedRuns[postponed[k]]['lastSuccess']
-		runLink = feedRuns[postponed[k]]['runLink']
-
-		feedCheck.write('\t' + runId +': {\t\'siteName\': ' + siteName + '\n')
-		feedCheck.write('\t\t\t\t\'feedName\': ' + feedName + '\n')
-		feedCheck.write('\t\t\t\t\'feedProfile\': ' + feedProfile +'\n')
-		feedCheck.write('\t\t\t\t\'statusCode\': ' + statusCode + '\n')
-		feedCheck.write('\t\t\t\t\'statusSummary\': ' + statusSummary + '\n')
-		feedCheck.write('\t\t\t\t\'lastReceived\': ' + lastReceived + '\n')
-		feedCheck.write('\t\t\t\t\'lastSuccess\': ' + lastSuccess + '\n')
-		feedCheck.write('\t\t\t\t\'runLink\': ' + runLink + '\n')
-		feedCheck.write('\t\t\t }' + '\n')
-		k += 1
-
-if len(postponed) >= 1:
-	feedCheck.write('\n\n\n')
-
-l = 0
-feedCheck.write(str(len(late)) + ' late feeds.\n')
-while l < len(late):
-	runId = str(late[l])
-	siteName = feedRuns[late[l]]['siteName']
-	feedProfile = feedRuns[late[l]]['feedProfile']
-	feedName = feedRuns[late[l]]['feedName']
-	statusCode = feedRuns[late[l]]['statusCode']
-	statusSummary = feedRuns[late[l]]['statusSummary']
-	lastReceived = feedRuns[late[l]]['lastReceived']
-	if feedRuns[late[l]]['lastSuccess'] == None:
-		lastSuccess = 'NO PRIOR SUCESS.'
-	else:
-		lastSuccess = feedRuns[late[l]]['lastSuccess']
-	runLink = feedRuns[late[l]]['runLink']
-
-	feedCheck.write('\t' + runId +': {\t\'siteName\': ' + siteName + '\n')
-	feedCheck.write('\t\t\t\t\'feedName\': ' + feedName + '\n')
-	feedCheck.write('\t\t\t\t\'feedProfile\': ' + feedProfile +'\n')
-	feedCheck.write('\t\t\t\t\'statusCode\': ' + statusCode + '\n')
-	feedCheck.write('\t\t\t\t\'statusSummary\': ' + statusSummary + '\n')
-	feedCheck.write('\t\t\t\t\'lastReceived\': ' + lastReceived + '\n')
-	feedCheck.write('\t\t\t\t\'lastSuccess\': ' + lastSuccess + '\n')
-	feedCheck.write('\t\t\t\t\'runLink\': ' + runLink + '\n')
-	feedCheck.write('\t\t\t }' + '\n')
-	l += 1
+feedCheck.write('''
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>N4F 2.0</title>
+<style type="text/css">
+html {background-color: white;}
+h1 {font-family: "Times Roman", serif; font-size: 15pt; font-weight: bold;}
+body {margin: 10px; font-family: "Times Roman", serif; font-size: 10pt; color: black; background-color: white;}
+table.n4f2 {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 800px;}
+th {font-family: "Times Roman", serif; font-size: 13pt; border: 1px solid; border-color: #E1EEF4; font-weight: bold; padding: 5px 5px; color: white; background-color: #003E5C; text-align: center;}
+td {font-family: "Times Roman", serif; font-size: 10pt; border: 1px solid; border-color: #E1EEF4; padding: 3px 3px;}
+tr.ok {background-color: #c0ffc0; border-color: #E1EEF4;}
+tr.bad {font-weight: bold; color: white; background-color: #dd6060; border-color: #ffc0c0;}
+tr.delayed {font-weight: bold; color: #404040; background-color: #F5A61D; border-color: #E1EEF4;}
+tr.abandon {color: #808080; background-color: #e0e0e0; border-color: #E1EEF4;}
+span.sp {font-family: "Times Roman", serif; font-size: 15pt; color: #780000;}
+table.legend {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 300px;}
+</style>
+</head>
+<body>
+<center>
+<p><h1>''' + filename + '''</h1></p>
+<table class="n4f2">
+<tr>
+<th>Run ID</th>
+<th>Site Name (ID)</th>
+<th>Feed&nbsp;Date</th>
+<th>Status Message (Code)</th>
+</tr>
+''')
+feedAPIparseFunction.write_feed_info(error, feedRuns, feedCheck, 'error')
+feedAPIparseFunction.write_feed_info(postponed, feedRuns, feedCheck, 'postponed')
+feedAPIparseFunction.write_feed_info(late, feedRuns, feedCheck, 'late')
+feedCheck.write('''
+</center>
+</body>
+</html>
+''')
 
 feedCheck.close()
 
