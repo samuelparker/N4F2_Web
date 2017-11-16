@@ -1,4 +1,5 @@
-
+# Python bytecode:
+*.pyc
 
 # SQLite3 database files:
 *.db
