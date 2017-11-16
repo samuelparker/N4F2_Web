@@ -1,0 +1,32 @@
+# Python bytecode:
+*.pyc
+
+# SQLite3 database files:
+*.db
+
+# Logs:
+logs
+*.log
+
+# Linux Editors
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.elc
+auto-save-list
+tramp
+.\#*
+*.swp
+*.swo
+
+# Mac
+.DS_Store
+._*
+
+# Pycharm
+.idea/*
+
+# Windows
+Thumbs.db
+Desktop.ini
