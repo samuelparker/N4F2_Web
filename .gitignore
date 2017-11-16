@@ -1,8 +1,10 @@
-# Python bytecode:
-*.pyc
+
 
 # SQLite3 database files:
 *.db
+
+# Postgres database
+database/
 
 # Logs:
 logs
@@ -30,3 +32,4 @@ tramp
 # Windows
 Thumbs.db
 Desktop.ini
+
