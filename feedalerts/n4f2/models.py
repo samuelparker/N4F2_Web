@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class Feedruns(models.Model):
+class Feedrun(models.Model):
     run_id = models.IntegerField()
     site_name = models.CharField(max_length=200)
     feed_profile = models.CharField(max_length=200)
@@ -14,7 +14,7 @@ class Feedruns(models.Model):
     def __str__(self):
         return self.run_id
 
-class Ignorelist(models.Model):
+class Ignoredsite(models.Model):
     site_name = models.CharField(max_length=200)
 
     def __str__(self):
