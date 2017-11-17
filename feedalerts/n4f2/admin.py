@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Feedruns, Ignorelist
+from .models import Feedrun, Ignoredsite
 
-admin.site.register(Feedruns)
-admin.site.register(Ignorelist)
+admin.site.register(Feedrun)
+admin.site.register(Ignoredsite)

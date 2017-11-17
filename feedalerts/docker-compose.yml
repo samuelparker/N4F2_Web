@@ -10,8 +10,6 @@ services:
     build: .
     command: >
       /bin/bash -c "
-        apt-get update
-        apt-get -y install netcat
         while ! nc -z db 5432;
         do
           echo sleeping;
