@@ -6,6 +6,9 @@ services:
     restart: always
     volumes:
       - ./database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
   web:
     build: .
     command: >
