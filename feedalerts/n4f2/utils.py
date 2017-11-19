@@ -30,7 +30,6 @@ def create_time_settings_json():
 
 
 def parse_api_response(feed_json, ignore_list, time_settings):
-
     parsed_response = {
         'feed_runs': [],
         'late': [],
@@ -64,8 +63,7 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId'])
                 }
             }
-            # import pdb
-            # pdb.set_trace()
+
             parsed_response['feed_runs'].append(feed_run)
             
             if feed_json[i]['lastReceived'] < time_settings['now'].strftime(time_settings['utcTimeFormat']):
