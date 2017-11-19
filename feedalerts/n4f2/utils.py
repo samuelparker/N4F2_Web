@@ -4,6 +4,27 @@ from pytz import timezone
 import requests, pytz, time
 
 
+def add_feed_runs_to_db(feed_run_report):
+    for run in feed_run_report['feed_run_details']['feed_runs']:
+            for key in run.keys():
+                fr = Feedrun(
+                    run_id = key,
+                    site_name = run[key]['siteName'],
+                    feed_profile = run[key]['feedProfile'],
+                    feed_name = run[key]['feedName'],
+                    status_code = run[key]['statusCode'],
+                    status_summary = run[key]['statusSummary'],
+                    last_received = run[key]['lastReceived'],
+                    last_success = run[key]['lastSuccess']
+                )
+
+                verify = Feedrun.objects.filter(run_id=fr.run_id)
+                if verify.exists():
+                    print(verify[0].run_id + " already exists. Skipping.")
+                else:
+                    fr.save()
+
+
 def create_feed_run_report():
     feed_json = fetch_feed_status()
     if type(feed_json) is int:
