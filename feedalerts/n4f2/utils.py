@@ -4,6 +4,18 @@ from pytz import timezone
 import requests, pytz, time
 
 
+def create_feed_run_report():
+    feed_json = fetch_feed_status()
+    if type(feed_json) is int:
+        return "Feed Status API returned error code " + feed_json
+
+    ignore_list = create_ignored_site_list()
+    time_settings = create_time_settings_json()
+    feed_run_details = parse_api_response(feed_json, ignore_list, time_settings)
+
+    return {'ignore_list': ignore_list, 'time_settings': time_settings, 'feed_run_details': feed_run_details }
+
+
 def fetch_feed_status():
     response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog')
 
