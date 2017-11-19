@@ -15,12 +15,13 @@ def add_feed_runs_to_db(feed_run_report):
                     status_code = run[key]['statusCode'],
                     status_summary = run[key]['statusSummary'],
                     last_received = run[key]['lastReceived'],
-                    last_success = run[key]['lastSuccess']
+                    last_success = run[key]['lastSuccess'],
+                    run_link = run[key]['runLink']
                 )
 
                 verify = Feedrun.objects.filter(run_id=fr.run_id)
                 if verify.exists():
-                    print(verify[0].run_id + " already exists. Skipping.")
+                    print(str(verify[0].run_id) + " already exists. Skipping.")
                 else:
                     fr.save()
 

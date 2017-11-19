@@ -26,7 +26,7 @@ def seed_ignorelist(apps, schema_editor):
     for site in sites:
         verify = Ignoredsite.objects.filter(site_name=site)
         if verify.exists():
-            print(verify[0].site_name + " already exists. Skipping")
+            print(str(verify[0].site_name) + " already exists. Skipping")
         else:
             s = Ignoredsite(site_name = site)
             s.save()
