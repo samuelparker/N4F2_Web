@@ -5,7 +5,12 @@ import requests, pytz, time
 
 
 def fetch_feed_status():
-    return requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog').json()
+    response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog')
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return response.status_code
 
 
 def create_ignored_site_list():
