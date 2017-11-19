@@ -8,9 +8,10 @@ class Feedrun(models.Model):
     feed_name = models.CharField(max_length=200)
     status_code = models.CharField(max_length=200)
     status_summary = models.CharField(max_length=200)
+    run_link = models.CharField(max_length=200)
     last_received = models.DateTimeField('date received')
     last_success = models.DateTimeField('date published')
-    
+
     def __str__(self):
         return str(self.run_id)
 
