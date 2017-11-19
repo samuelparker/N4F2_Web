@@ -12,7 +12,7 @@ class Feedrun(models.Model):
     last_success = models.DateTimeField('date published')
     
     def __str__(self):
-        return self.run_id
+        return str(self.run_id)
 
 class Ignoredsite(models.Model):
     site_name = models.CharField(max_length=200)

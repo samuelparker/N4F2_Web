@@ -4,8 +4,46 @@ from pytz import timezone
 import requests, pytz, time
 
 
+def add_feed_runs_to_db(feed_run_report):
+    for run in feed_run_report['feed_run_details']['feed_runs']:
+            for key in run.keys():
+                fr = Feedrun(
+                    run_id = key,
+                    site_name = run[key]['siteName'],
+                    feed_profile = run[key]['feedProfile'],
+                    feed_name = run[key]['feedName'],
+                    status_code = run[key]['statusCode'],
+                    status_summary = run[key]['statusSummary'],
+                    last_received = run[key]['lastReceived'],
+                    last_success = run[key]['lastSuccess']
+                )
+
+                verify = Feedrun.objects.filter(run_id=fr.run_id)
+                if verify.exists():
+                    print(verify[0].run_id + " already exists. Skipping.")
+                else:
+                    fr.save()
+
+
+def create_feed_run_report():
+    feed_json = fetch_feed_status()
+    if type(feed_json) is int:
+        return "Feed Status API returned error code " + feed_json
+
+    ignore_list = create_ignored_site_list()
+    time_settings = create_time_settings_json()
+    feed_run_details = parse_api_response(feed_json, ignore_list, time_settings)
+
+    return {'ignore_list': ignore_list, 'time_settings': time_settings, 'feed_run_details': feed_run_details }
+
+
 def fetch_feed_status():
-    return requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog').json()
+    response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog')
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return response.status_code
 
 
 def create_ignored_site_list():
