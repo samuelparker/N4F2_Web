@@ -29,7 +29,7 @@ def add_feed_runs_to_db(feed_run_report):
 def create_feed_run_report():
     feed_json = fetch_feed_status()
     if type(feed_json) is int:
-        return "Feed Status API returned error code " + feed_json
+        return "Feed Status API returned error code " + str(feed_json)
 
     ignore_list = create_ignored_site_list()
     time_settings = create_time_settings_json()
@@ -102,12 +102,11 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId'])
                 }
             }
-
-            parsed_response['feed_runs'].append(feed_run)
-            
+                      
             if feed_json[i]['lastReceived'] < time_settings['now'].strftime(time_settings['utcTimeFormat']):
                 if feed_json[i]['lastReceived'] > time_settings['dontReport'].strftime(time_settings['utcTimeFormat']):
                     parsed_response['late'].append(feed_json[i]['runId'])
+                    feed_run[feed_json[i]['runId']]['statusCode'] = feed_run[feed_json[i]['runId']]['statusCode'] + '_LATE'
             if feed_json[i]['statusCode'] == 'ERROR' or feed_json[i]['statusCode'] == 'COMPLETE_WITH_FATAL_ERRORS':
                 parsed_response['error'].append(feed_json[i]['runId'])
             if feed_json[i]['statusCode'] == 'INTERRUPTED':
@@ -116,6 +115,8 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 parsed_response['unfinished'].append(feed_json[i]['runId'])
             if feed_json[i]['statusCode'] == 'POSTPONED_SITE_CONFLICT':
                 parsed_response['postponed'].append(feed_json[i]['runId'])
+            
+            parsed_response['feed_runs'].append(feed_run)
             i += 1
 
     

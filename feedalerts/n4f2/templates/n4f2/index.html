@@ -1,0 +1,69 @@
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>N4F 2.0</title>
+    <style type="text/css">
+        html {background-color: white;}
+        h1 {font-family: "Times Roman", serif; font-size: 15pt; font-weight: bold;}
+        body {margin: 10px; font-family: "Times Roman", serif; font-size: 10pt; color: black; background-color: white;}
+        table.n4f2 {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 800px;}
+        th {font-family: "Times Roman", serif; font-size: 13pt; border: 1px solid; border-color: #E1EEF4; font-weight: bold; padding: 5px 5px; color: white; background-color: #003E5C; text-align: center;}
+        td {font-family: "Times Roman", serif; font-size: 10pt; border: 1px solid; border-color: #E1EEF4; padding: 3px 3px;}
+        tr.ok {background-color: #c0ffc0; border-color: #E1EEF4;}
+        tr.bad {font-weight: bold; color: white; background-color: #dd6060; border-color: #ffc0c0;}
+        tr.delayed {font-weight: bold; color: #404040; background-color: #F5A61D; border-color: #E1EEF4;}
+        tr.abandon {color: #808080; background-color: #e0e0e0; border-color: #E1EEF4;}
+        span.sp {font-family: "Times Roman", serif; font-size: 15pt; color: #780000;}
+        table.legend {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 300px;}
+    </style>
+</head>
+<body>
+    <center>
+        <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
+        <table class="n4f2">
+            <tr>
+                <th>Run ID</th>
+                <th>Site Name</th>
+                <th>Feed&nbsp;Date</th>
+                <th>Status Message (Code)</th>
+            </tr>
+            {% if feedruns %}
+                {% for feed in feedruns %}
+                <!-- Feeds in Errored State -->            
+                {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
+                <tr class="bad">
+                    <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
+                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile: {{ feed.feed_profile }}</center></td>
+                    <td><center>{{ feed.last_received }}</center></td>
+                    <td><center>{{ feed.status_code }}</center></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            <!-- Feeds in Delayed State -->
+                {% for feed in feedruns %}
+                {% if feed.status_code == "COMPLETE_LATE" %}
+                <tr class="delayed">
+                    <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
+                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile: {{ feed.feed_profile }}</center></td>
+                    <td><center>{{ feed.last_received }}</center></td>
+                    <td><center>{{ feed.status_code }}</center></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            <!-- Feeds in Successful State -->
+                {% for feed in feedruns %}
+                {% if feed.status_code == "COMPLETE" %}
+                <tr class="ok">
+                    <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
+                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile: {{ feed.feed_profile }}</center></td>
+                    <td><center>{{ feed.last_received }}</center></td>
+                    <td><center>{{ feed.status_code }}</center></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+        </table>
+    </center>
+</body>
+</html>
+                    
