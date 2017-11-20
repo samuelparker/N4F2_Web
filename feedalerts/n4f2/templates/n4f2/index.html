@@ -30,7 +30,7 @@
             {% if feedruns %}
                 {% for feed in feedruns %}
                 <!-- Feeds in Errored State -->            
-                {% if feed.status_code == "ERROR" %}
+                {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
                 <tr class="bad">
                     <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
                     <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile: {{ feed.feed_profile }}</center></td>
