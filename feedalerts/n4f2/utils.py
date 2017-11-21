@@ -103,8 +103,6 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 }
             }
                       
-            # import pdb
-            # pdb.set_trace()
             lastrecd_datetime = datetime.strptime(feed_json[i]['lastReceived'], time_settings['utcTimeFormat'])
 
             if lastrecd_datetime < time_settings['now']:
