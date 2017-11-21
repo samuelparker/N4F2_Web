@@ -103,8 +103,12 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 }
             }
                       
-            if feed_json[i]['lastReceived'] < time_settings['now'].strftime(time_settings['utcTimeFormat']):
-                if feed_json[i]['lastReceived'] > time_settings['dontReport'].strftime(time_settings['utcTimeFormat']):
+            # import pdb
+            # pdb.set_trace()
+            lastrecd_datetime = datetime.strptime(feed_json[i]['lastReceived'], time_settings['utcTimeFormat'])
+
+            if lastrecd_datetime < time_settings['now']:
+                if lastrecd_datetime < time_settings['dontReport']:
                     parsed_response['late'].append(feed_json[i]['runId'])
                     feed_run[feed_json[i]['runId']]['statusCode'] = feed_run[feed_json[i]['runId']]['statusCode'] + '_LATE'
             if feed_json[i]['statusCode'] == 'ERROR' or feed_json[i]['statusCode'] == 'COMPLETE_WITH_FATAL_ERRORS':
