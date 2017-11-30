@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from datetime import datetime, timedelta
 from n4f2 import utils
 
 from .models import Feedrun, Ignoredsite
@@ -11,7 +12,7 @@ def index(request):
         return HttpResponse(feed_run_report)
     else:
         utils.add_feed_runs_to_db(feed_run_report)
-        feedruns = Feedrun.objects.all()
+        feedruns = Feedrun.objects.filter(last_received__gte=datetime.now()-timedelta(days=30))
         context = {
             'feedruns': feedruns, 
             'feed_run_report': feed_run_report,
