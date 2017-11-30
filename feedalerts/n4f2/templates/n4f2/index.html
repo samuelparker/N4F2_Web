@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>N4F 2.0</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <style type="text/css">
         html {background-color: white;}
         h1 {font-family: "Times Roman", serif; font-size: 15pt; font-weight: bold;}
@@ -18,18 +19,32 @@
     </style>
 </head>
 <body>
+    <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:130px">
+        <h5 class="w3-bar-item">Menu</h5>
+        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'bad')">Error</button>
+        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
+        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
+    </div>
     <center>
         <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
-        <table class="n4f2">
+        <!-- <table class="n4f2">
             <tr>
                 <th>Run ID</th>
                 <th>Site Name</th>
                 <th>Feed&nbsp;Date</th>
                 <th>Status Message (Code)</th>
-            </tr>
+            </tr> -->
             {% if feedruns %}
+                <div id="bad" class="w3-container status w3-animate-left" style="display:none">
+                <table class="n4f2">
+                    <tr>
+                        <th>Run ID</th>
+                        <th>Site Name</th>
+                        <th>Feed&nbsp;Date</th>
+                        <th>Status Message (Code)</th>
+                    </tr>
                 {% for feed in feedruns %}
-                <!-- Feeds in Errored State -->            
+                <!-- Feeds in Errored State -->    
                 {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
                 <tr class="bad">
                     <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
@@ -39,7 +54,17 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
-            <!-- Feeds in Delayed State -->
+                </table>
+                </div>
+                <!-- Feeds in Delayed State -->
+                <div id="Late" class="w3-container status w3-animate-left" style="display:none">
+                        <table class="n4f2">
+                                <tr>
+                                    <th>Run ID</th>
+                                    <th>Site Name</th>
+                                    <th>Feed&nbsp;Date</th>
+                                    <th>Status Message (Code)</th>
+                                </tr>
                 {% for feed in feedruns %}
                 {% if feed.status_code == "COMPLETE_LATE" %}
                 <tr class="delayed">
@@ -50,7 +75,17 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
-            <!-- Feeds in Successful State -->
+                </table>
+                </div>
+                <!-- Feeds in Successful State -->
+                <div id="Complete" class="w3-container status w3-animate-left" style="display:none">
+                        <table class="n4f2">
+                                <tr>
+                                    <th>Run ID</th>
+                                    <th>Site Name</th>
+                                    <th>Feed&nbsp;Date</th>
+                                    <th>Status Message (Code)</th>
+                                </tr>
                 {% for feed in feedruns %}
                 {% if feed.status_code == "COMPLETE" %}
                 <tr class="ok">
@@ -61,9 +96,26 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
+                </table>
+                </div>
             {% endif %}
-        </table>
+        <!-- </table> -->
     </center>
+    <script>
+            function openLink(evt, statusName) {
+              var i, x, tablinks;
+              x = document.getElementsByClassName("status");
+              for (i = 0; i < x.length; i++) {
+                 x[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablink");
+              for (i = 0; i < x.length; i++) {
+                 tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+              }
+              document.getElementById(statusName).style.display = "block";
+              evt.currentTarget.className += " w3-red";
+            }
+            </script>
 </body>
 </html>
                     
