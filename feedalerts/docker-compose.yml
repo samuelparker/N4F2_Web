@@ -19,7 +19,8 @@ services:
           sleep 1;
         done;
         echo Connected!;
-        python3 manage.py runserver 0.0.0.0:8000"
+        python manage.py runserver 0.0.0.0:8000
+        python manage.py migrate"
     volumes:
       - .:/code
     ports:
