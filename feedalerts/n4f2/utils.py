@@ -20,9 +20,7 @@ def add_feed_runs_to_db(feed_run_report):
                 )
 
                 verify = Feedrun.objects.filter(run_id=fr.run_id)
-                if verify.exists():
-                    print(str(verify[0].run_id) + " already exists. Skipping.")
-                else:
+                if verify.exists() == False:
                     fr.save()
 
 
