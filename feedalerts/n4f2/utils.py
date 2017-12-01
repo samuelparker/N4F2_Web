@@ -60,7 +60,7 @@ def create_time_settings_json():
         'pacific': timezone('US/Pacific'),
         'now': datetime.utcnow() - timedelta(days = 1),
         'dontReport': datetime.utcnow() - timedelta(days = 30),
-        'localtime': time.asctime(time.localtime(time.time())),
+        'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
     }
 
     return time_settings
