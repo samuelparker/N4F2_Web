@@ -13,8 +13,10 @@ def index(request):
     else:
         utils.add_feed_runs_to_db(feed_run_report)
         feedruns = Feedrun.objects.filter(last_received__gte=datetime.now()-timedelta(days=30))
+        lateruns = Feedrun.objects.exclude(last_received__gte=datetime.now()-timedelta(days=30))
         context = {
             'feedruns': feedruns, 
+            'lateruns': lateruns,
             'feed_run_report': feed_run_report,
         }
         return render(request, 'n4f2/index.html', context)
