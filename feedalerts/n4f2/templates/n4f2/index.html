@@ -20,7 +20,7 @@
 </head>
 <body>
     <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:130px">
-        <h5 class="w3-bar-item tablink" onclick="openLink(event, 'Menu')">Menu</h5>
+        <h5 class="w3-bar-item" onclick="openLink(event, 'Menu')">Menu</h5>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
@@ -29,6 +29,7 @@
     <center>
         <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
             {% if feedruns %}
+                <!-- Feeds in Errored State --> 
                 <div id="Bad" class="w3-container status w3-animate-left" style="display:none">
                 <table class="n4f2">
                     <tr>
@@ -39,8 +40,7 @@
                         <th>Last&nbsp;Sucessfull&nbsp;Run</th>
                         <th>Notification&nbsp;Sent</th>
                     </tr>
-                {% for feed in feedruns %}
-                <!-- Feeds in Errored State -->    
+                {% for feed in feedruns %}   
                 {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
                 <tr class="bad">
                     <td><center><a href= {{ feed.run_link }}>{{ feed.run_id }}</center></td>
