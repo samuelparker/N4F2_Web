@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:10.1
     restart: always
     volumes:
       - ./database:/var/lib/postgresql/data
@@ -19,8 +19,8 @@ services:
           sleep 1;
         done;
         echo Connected!;
-        python manage.py runserver 0.0.0.0:8000
-        python manage.py migrate"
+        python manage.py migrate;
+        python manage.py runserver 0.0.0.0:8000;"
     volumes:
       - .:/code
     ports:
