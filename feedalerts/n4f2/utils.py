@@ -16,7 +16,8 @@ def add_feed_runs_to_db(feed_run_report):
                     status_summary = run[key]['statusSummary'],
                     last_received = run[key]['lastReceived'],
                     last_success = run[key]['lastSuccess'],
-                    run_link = run[key]['runLink']
+                    run_link = run[key]['runLink'],
+                    console_link = run[key]['consoleLink']
                 )
 
                 verify = Feedrun.objects.filter(run_id=fr.run_id)
@@ -97,7 +98,8 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 'lastReceived': feed_json[i]['lastReceived'],
                 'lastSuccess': feed_json[i]['lastSuccess'],
                 'siteName': feed_json[i]['siteName'],
-                'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId'])
+                'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId']),
+                'consoleLink': 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(feed_json[i]['runId'])
                 }
             }
                       

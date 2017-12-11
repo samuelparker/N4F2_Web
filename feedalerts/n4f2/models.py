@@ -9,6 +9,7 @@ class Feedrun(models.Model):
     status_code = models.CharField(max_length=200)
     status_summary = models.CharField(max_length=200)
     run_link = models.CharField(max_length=200)
+    console_link = models.CharField(max_length=200)
     last_received = models.DateTimeField('date received')
     last_success = models.DateTimeField('date published')
 
