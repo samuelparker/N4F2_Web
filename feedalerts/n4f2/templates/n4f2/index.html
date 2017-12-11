@@ -11,7 +11,7 @@
         th {font-family: "Times Roman", serif; font-size: 13pt; border: 1px solid; border-color: #E1EEF4; font-weight: bold; padding: 5px 5px; color: white; background-color: #003E5C; text-align: center;}
         td {font-family: "Times Roman", serif; font-size: 10pt; border: 1px solid; border-color: #E1EEF4; padding: 3px 3px;}
         tr.ok {background-color: #c0ffc0; border-color: #E1EEF4;}
-        tr.bad {font-weight: bold; color: white; background-color: #dd6060; border-color: #ffc0c0;}
+        tr.bad {font-weight: normal; color: rgb(255, 255, 255); background-color: #971b13; border-color: #ffc0c0;}
         tr.delayed {font-weight: bold; color: #404040; background-color: #F5A61D; border-color: #E1EEF4;}
         tr.abandon {color: #808080; background-color: #e0e0e0; border-color: #E1EEF4;}
         span.sp {font-family: "Times Roman", serif; font-size: 15pt; color: #780000;}
@@ -25,9 +25,11 @@
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Over 30</button>
+        <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/accounts/logout/'">Log Out</button>
     </div>
     <center>
         <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
+        {% if user.is_authenticated %}    
             {% if feedruns %}
                 <!-- Feeds in Errored State --> 
                 <div id="Bad" class="w3-container status w3-animate-left" style="display:none">
@@ -116,6 +118,10 @@
                     </table>
                 </div>
             {% endif %}
+        {% else %}
+            <meta http-equiv="refresh" content="0; url=/accounts/login/" />
+            <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
+        {% endif %}
     </center>
     <script>
         function openLink(evt, statusName) {

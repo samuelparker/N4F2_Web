@@ -25,7 +25,7 @@ SECRET_KEY = ')%c=hu(4b02c^2wyckh!4bxhm--o6q9dk@ajdd(yb9q5$9x7ax'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.22.162.130', '25.58.153.150']
+ALLOWED_HOSTS = ['172.22.162.130', '25.58.153.150', 'localhost']
 
 
 # Application definition
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'n4f2_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['./templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,3 +123,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/n4f2/'
