@@ -17,7 +17,8 @@ def add_feed_runs_to_db(feed_run_report):
                     last_received = run[key]['lastReceived'],
                     last_success = run[key]['lastSuccess'],
                     run_link = run[key]['runLink'],
-                    console_link = run[key]['consoleLink']
+                    console_link = run[key]['consoleLink'],
+                    notification_sent = False
                 )
 
                 verify = Feedrun.objects.filter(run_id=fr.run_id)
