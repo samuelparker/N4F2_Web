@@ -10,6 +10,7 @@ class Feedrun(models.Model):
     status_summary = models.CharField(max_length=200)
     run_link = models.CharField(max_length=200)
     console_link = models.CharField(max_length=200)
+    notification_sent = models.BooleanField(default=False)
     last_received = models.DateTimeField('date received')
     last_success = models.DateTimeField('date published')
 
