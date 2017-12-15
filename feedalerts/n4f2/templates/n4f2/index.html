@@ -50,7 +50,7 @@
                     <td><center>{{ feed.last_received }}</center></td>
                     <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
                     <td><center>{{ feed.last_success }}</center></td>
-                    <td><center><input class="w3-check" type="checkbox" name={{ feed.id }}></center></td>
+                    <td><center><input class="w3-check" type="checkbox" name={{ feed.id }} {% if feed.notification_sent %} checked="checked"{% endif %}></center></td>
                 </tr>
                 {% endif %}
                 {% endfor %}
