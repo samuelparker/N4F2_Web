@@ -44,14 +44,26 @@
                     </tr>
                 {% for feed in feedruns %}   
                 {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
-                <tr class="bad">
-                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
-                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                    <td><center>{{ feed.last_received }}</center></td>
-                    <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
-                    <td><center>{{ feed.last_success }}</center></td>
-                    <td><center><input class="w3-check" type="checkbox" name={{ feed.id }} {% if feed.notification_sent==True %} checked="checked"{% endif %}></center></td>
-                </tr>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" href={{ feed.id }}>
+                                <tr class="bad">
+                                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
+                                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                                    <td><center>{{ feed.last_received }}</center></td>
+                                    <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
+                                    <td><center>{{ feed.last_success }}</center></td>
+                                    <td><center><input class="w3-check" type="checkbox" name={{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %} onclick={{% if feed.notification_sent == False % }} {{ feed.notification_sent = True }} {{% else %}} {{ feed.notification_sent = False }} {{% endif %}}></center></td>
+                                </tr>
+                            </a>
+                        </div>
+                        <div id={{ run.id }} class="panel-collapse collapse">
+                            <tr class="bad"><td>This is a test. This is only a test.</td></tr>
+                        </div>
+                    </div>
+                </div>
+
                 {% endif %}
                 {% endfor %}
                 </table>
