@@ -90,6 +90,8 @@ def parse_api_response(feed_json, ignore_list, time_settings):
         if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
             i += 1
         else:
+            if feed_json[i]['lastSuccess'] == None:
+                feed_json[i]['lastSuccess'] = '0000-00-00T00:00:00Z'
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
                 'feedName': feedName,
