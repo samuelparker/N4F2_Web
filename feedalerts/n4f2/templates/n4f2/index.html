@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>N4F 2.0</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style type="text/css">
         html {background-color: white;}
         h1 {font-family: "Times Roman", serif; font-size: 15pt; font-weight: bold;}
@@ -24,7 +27,7 @@
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
-        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Over 30</button>
+        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
         <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/accounts/logout/'">Log Out</button>
     </div>
     <center>
@@ -44,14 +47,17 @@
                     </tr>
                 {% for feed in feedruns %}   
                 {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
-                <tr class="bad">
-                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
-                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                    <td><center>{{ feed.last_received }}</center></td>
-                    <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
-                    <td><center>{{ feed.last_success }}</center></td>
-                    <td><center><input class="w3-check" type="checkbox"></center></td>
-                </tr>
+                        <tr data-toggle="collapse" data-target=#{{ feed.id }} class="bad">
+                                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
+                                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                                    <td><center>{{ feed.last_received }}</center></td>
+                                    <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
+                                    <td><center>{{ feed.last_success }}</center></td>
+                                    <td><center><input class="w3-check" type="checkbox" name={{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
+                        </tr>
+                        <tr class="bad">
+                                <td colspan="6"><div id={{ feed.id }} class="collapse">This is a test. This is only a test.</div></td>
+                        </tr>
                 {% endif %}
                 {% endfor %}
                 </table>
