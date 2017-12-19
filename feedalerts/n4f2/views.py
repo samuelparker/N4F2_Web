@@ -12,8 +12,8 @@ def index(request):
         return HttpResponse(feed_run_report)
     else:
         utils.add_feed_runs_to_db(feed_run_report)
-        feedruns = Feedrun.objects.filter(last_received__gte=datetime.now()-timedelta(days=30))
-        lateruns = Feedrun.objects.exclude(last_received__gte=datetime.now()-timedelta(days=30))
+        feedruns = Feedrun.objects.filter(last_received__gte=datetime.now()-timedelta(days=30)).order_by("site_name")
+        lateruns = Feedrun.objects.exclude(last_received__gte=datetime.now()-timedelta(days=30)).order_by("site_name")
         context = {
             'feedruns': feedruns, 
             'lateruns': lateruns,
