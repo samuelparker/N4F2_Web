@@ -1,26 +1,8 @@
+{% extends "n4f2/base.html" %}
 
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>N4F 2.0</title>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        html {background-color: white;}
-        h1 {font-family: "Times Roman", serif; font-size: 15pt; font-weight: bold;}
-        body {margin: 10px; font-family: "Times Roman", serif; font-size: 10pt; color: black; background-color: white;}
-        table.n4f2 {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 800px; display: inline;}
-        th {font-family: "Times Roman", serif; font-size: 13pt; border: 1px solid; border-color: #E1EEF4; font-weight: bold; padding: 5px 5px; color: white; background-color: #003E5C; text-align: center;}
-        td {font-family: "Times Roman", serif; font-size: 10pt; border: 1px solid; border-color: #E1EEF4;  padding: 0px 3px;}
-        tr.ok {background-color: #c0ffc0; border-color: #E1EEF4;}
-        tr.bad {font-weight: normal; color: rgb(255, 255, 255); background-color: #971b13; border-color: #ffc0c0;}
-        tr.delayed {font-weight: bold; color: #404040; background-color: #F5A61D; border-color: #E1EEF4;}
-        tr.abandon {color: #808080; background-color: #e0e0e0; border-color: #E1EEF4;}
-        span.sp {font-family: "Times Roman", serif; font-size: 15pt; color: #780000;}
-        table.legend {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 300px;}
-    </style>
+{% block content %}
+<center>
+    <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
     <script>
         var checkbox
         var feedrun_pk = 1
@@ -48,130 +30,116 @@
             });
         });
     </script>
-</head>
-<body>
-    <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:130px">
-        <h5 class="w3-bar-item" onclick="openLink(event, 'Menu')">Menu</h5>
-        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
-        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
-        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
-        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
-        <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/accounts/logout/'">Log Out</button>
-    </div>
-    <center>
-        <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
-        {% if user.is_authenticated %}    
-            {% if feedruns %}
-                <!-- Feeds in Errored State --> 
-                <div id="Bad" class="w3-container status w3-animate-left" style="display:none">
+    {% if user.is_authenticated %}    
+        {% if feedruns %}
+            <!-- Feeds in Errored State --> 
+            <div id="Bad" class="w3-container status w3-animate-left" style="display:none">
+            <table class="n4f2">
+                <tr>
+                    <th>Run&nbsp;ID</th>
+                    <th>Site Name</th>
+                    <th>Feed&nbsp;Date</th>
+                    <th>Status Message</th>
+                    <th>Last&nbsp;Sucessfull&nbsp;Run</th>
+                    <th>Notification&nbsp;Sent</th>
+                </tr>
+            {% for feed in feedruns %}   
+            {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
+                    <tr class="bad">
+                                <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
+                                <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                                <td><center>{{ feed.last_received }}</center></td>
+                                <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
+                                <td><center>{{ feed.last_success }}</center></td>
+                                <td vertical-align: top;><center><input class="checkbox" type="checkbox" id=checkbox_{{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
+                    </tr>
+                    <tr class="bad">
+                            <td colspan="6"><div id={{ feed.id }} class="collapse" style="padding: 5px">This is a test. This is only a test.</div></td>
+                    </tr>
+            {% endif %}
+            {% endfor %}
+            </table>
+            </div>
+            <!-- Feeds in Delayed State -->
+            <div id="Late" class="w3-container status w3-animate-left" style="display:none">
                 <table class="n4f2">
                     <tr>
                         <th>Run&nbsp;ID</th>
                         <th>Site Name</th>
-                        <th>Feed&nbsp;Date</th>
+                        <th>Feed Date</th>
                         <th>Status Message</th>
-                        <th>Last&nbsp;Sucessfull&nbsp;Run</th>
-                        <th>Notification&nbsp;Sent</th>
                     </tr>
-                {% for feed in feedruns %}   
-                {% if feed.status_code == "ERROR" or feed.status_code == "ERROR_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS_LATE" or feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
-                        <tr class="bad">
-                                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
-                                    <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                                    <td><center>{{ feed.last_received }}</center></td>
-                                    <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
-                                    <td><center>{{ feed.last_success }}</center></td>
-                                    <td vertical-align: top;><center><input class="checkbox" type="checkbox" id=checkbox_{{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
-                        </tr>
-                        <tr class="bad">
-                                <td colspan="6"><div id={{ feed.id }} class="collapse" style="padding: 5px">This is a test. This is only a test.</div></td>
-                        </tr>
-                {% endif %}
-                {% endfor %}
-                </table>
-                </div>
-                <!-- Feeds in Delayed State -->
-                <div id="Late" class="w3-container status w3-animate-left" style="display:none">
-                    <table class="n4f2">
-                        <tr>
-                            <th>Run&nbsp;ID</th>
-                            <th>Site Name</th>
-                            <th>Feed Date</th>
-                            <th>Status Message</th>
-                        </tr>
-                {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE_LATE" %}
-                <tr class="delayed">
-                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
-                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                    <td><center>{{ feed.last_received }}</center></td>
-                    <td><center>{{ feed.status_code }}</center></td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-                </table>
-                </div>
-                <!-- Feeds in Successful State -->
-                <div id="Complete" class="w3-container status w3-animate-left" style="display:none">
-                    <table class="n4f2">
-                         <tr>
-                            <th>Run&nbsp;ID</th>
-                            <th>Site Name</th>
-                            <th>Feed Date</th>
-                            <th>Status Message</th>
-                        </tr>
-                {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE" %}
-                <tr class="ok">
-                    <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
-                    <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                    <td><center>{{ feed.last_received }}</center></td>
-                    <td><center>{{ feed.status_code }}</center></td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-                </table>
-                </div>
-                <!-- Feeds over 30 days -->
-                <div id="abandon" class="w3-container status w3-animate-left" style="display:none">
-                    <table class="n4f2">
-                        <tr>
-                            <th>Run&nbsp;ID</th>
-                            <th>Site Name</th>
-                            <th>Feed Date</th>
-                            <th>Status Message</th>
-                        </tr>
-                {% for feed in lateruns %}
-                        <tr class="abandon">
-                            <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
-                            <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
-                            <td><center>{{ feed.last_received }}</center></td>
-                            <td><center>{{ feed.status_code }}</center></td>
-                        </tr>
-                {% endfor %}
-                    </table>
-                </div>
+            {% for feed in feedruns %}
+            {% if feed.status_code == "COMPLETE_LATE" %}
+            <tr class="delayed">
+                <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
+                <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                <td><center>{{ feed.last_received }}</center></td>
+                <td><center>{{ feed.status_code }}</center></td>
+            </tr>
             {% endif %}
-        {% else %}
-            <meta http-equiv="refresh" content="0; url=/accounts/login/" />
-            <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
+            {% endfor %}
+            </table>
+            </div>
+            <!-- Feeds in Successful State -->
+            <div id="Complete" class="w3-container status w3-animate-left" style="display:none">
+                <table class="n4f2">
+                        <tr>
+                        <th>Run&nbsp;ID</th>
+                        <th>Site Name</th>
+                        <th>Feed Date</th>
+                        <th>Status Message</th>
+                    </tr>
+            {% for feed in feedruns %}
+            {% if feed.status_code == "COMPLETE" %}
+            <tr class="ok">
+                <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
+                <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                <td><center>{{ feed.last_received }}</center></td>
+                <td><center>{{ feed.status_code }}</center></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </table>
+            </div>
+            <!-- Feeds over 30 days -->
+            <div id="abandon" class="w3-container status w3-animate-left" style="display:none">
+                <table class="n4f2">
+                    <tr>
+                        <th>Run&nbsp;ID</th>
+                        <th>Site Name</th>
+                        <th>Feed Date</th>
+                        <th>Status Message</th>
+                    </tr>
+            {% for feed in lateruns %}
+                    <tr class="abandon">
+                        <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</center></td>
+                        <td><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                        <td><center>{{ feed.last_received }}</center></td>
+                        <td><center>{{ feed.status_code }}</center></td>
+                    </tr>
+            {% endfor %}
+                </table>
+            </div>
         {% endif %}
-    </center>
-    <script>
-        function openLink(evt, statusName) {
-          var i, x, tablinks;
-          x = document.getElementsByClassName("status");
-          for (i = 0; i < x.length; i++) {
-             x[i].style.display = "none";
-          }
-          tablinks = document.getElementsByClassName("tablink");
-          for (i = 0; i < x.length; i++) {
-             tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
-          }
-          document.getElementById(statusName).style.display = "block";
-          evt.currentTarget.className += " w3-red";
+    {% else %}
+        <meta http-equiv="refresh" content="0; url=/accounts/login/" />
+        <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
+    {% endif %}
+</center>
+<script>
+    function openLink(evt, statusName) {
+        var i, x, tablinks;
+        x = document.getElementsByClassName("status");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
         }
-    </script>
-</body>
-</html>
-                    
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < x.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+        }
+        document.getElementById(statusName).style.display = "block";
+        evt.currentTarget.className += " w3-red";
+    }
+</script>
+{% endblock %}
