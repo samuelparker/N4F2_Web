@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style type="text/css">
         html {background-color: white;}
@@ -20,6 +21,33 @@
         span.sp {font-family: "Times Roman", serif; font-size: 15pt; color: #780000;}
         table.legend {border-collapse: collapse; border: 1px solid; border-color: #E1EEF4; width: 300px;}
     </style>
+    <script>
+        var checkbox
+        var feedrun_pk = 1
+        var url_mask
+        var csrftoken = Cookies.get('csrftoken');
+        $(window).on( "load", function() {
+            console.log("document is ready")
+            $( ".checkbox" ).click(function( event ) {
+                checkbox = event.target.id;
+                feedrun_pk = checkbox.split('_')[1];
+                url_mask = "{% url 'n4f2:notify' 00000  %}".replace(/0/, feedrun_pk.toString());
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                $.post(url_mask);
+                console.log("posted!")
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:130px">
@@ -53,10 +81,10 @@
                                     <td><center>{{ feed.last_received }}</center></td>
                                     <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
                                     <td><center>{{ feed.last_success }}</center></td>
-                                    <td vertical-align: top;><center><input class="checkbox" type="checkbox" name={{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
+                                    <td vertical-align: top;><center><input class="checkbox" type="checkbox" id=checkbox_{{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
                         </tr>
                         <tr class="bad">
-                                <td colspan="6"><div id={{ feed.id }} class="collapse">This is a test. This is only a test.</div></td>
+                                <td colspan="6"><div id={{ feed.id }} class="collapse" style="padding: 5px">This is a test. This is only a test.</div></td>
                         </tr>
                 {% endif %}
                 {% endfor %}
