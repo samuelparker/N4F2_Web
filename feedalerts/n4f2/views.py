@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from n4f2 import utils
@@ -20,3 +20,12 @@ def index(request):
             'feed_run_report': feed_run_report,
         }
         return render(request, 'n4f2/index.html', context)
+
+def notify(request, feedrun_pk):
+    feedrun = get_object_or_404(Feedrun, pk=feedrun_pk)
+    if feedrun.notification_sent == True:
+        feedrun.notification_sent = False
+    else:
+        feedrun.notification_sent = True
+    feedrun.save()
+        
