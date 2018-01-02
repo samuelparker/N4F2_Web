@@ -5,7 +5,7 @@
     <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
     <script>
         var checkbox
-        var feedrun_pk = 1
+        var feedrun_pk
         var url_mask
         var csrftoken = Cookies.get('csrftoken');
         $(window).on( "load", function() {
