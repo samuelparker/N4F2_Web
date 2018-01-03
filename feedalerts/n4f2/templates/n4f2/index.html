@@ -3,13 +3,13 @@
 {% block content %}
 <center>
     <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script>
         var checkbox
         var feedrun_pk
         var url_mask
         var csrftoken = Cookies.get('csrftoken');
-        $(window).on( "load", function() {
-            console.log("document is ready")
+        $(window).on( "load", function()
             $( ".checkbox" ).click(function( event ) {
                 checkbox = event.target.id;
                 feedrun_pk = checkbox.split('_')[1];
@@ -26,7 +26,6 @@
                     }
                 });
                 $.post(url_mask);
-                console.log("posted!")
             });
         });
     </script>
@@ -127,19 +126,6 @@
         <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
     {% endif %}
 </center>
-<script>
-    function openLink(evt, statusName) {
-        var i, x, tablinks;
-        x = document.getElementsByClassName("status");
-        for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < x.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
-        }
-        document.getElementById(statusName).style.display = "block";
-        evt.currentTarget.className += " w3-red";
-    }
-</script>
+{% load static %}
+<script src="{% static 'n4f2/scripts.js' %}"></script>
 {% endblock %}
