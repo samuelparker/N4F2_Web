@@ -46,6 +46,14 @@ def fetch_feed_status():
     else:
         return response.status_code
 
+def fetch_hook_feed_status():
+    response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog&siteId=852')
+    if response.status_code != 200:
+        for i in range(0,10):
+            fetch_hook_feed_status()
+    else:
+        return response.json()
+
 
 def create_ignored_site_list():
     ignored_site_list = []
