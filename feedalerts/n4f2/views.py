@@ -28,4 +28,5 @@ def notify(request, feedrun_pk):
     else:
         feedrun.notification_sent = True
     feedrun.save()
+    return HttpResponse(status=200)
         
