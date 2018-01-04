@@ -9,7 +9,7 @@
         var feedrun_pk
         var url_mask
         var csrftoken = Cookies.get('csrftoken');
-        $(window).on( "load", function()
+        $(window).on( "load", function() {
             $( ".checkbox" ).click(function( event ) {
                 checkbox = event.target.id;
                 feedrun_pk = checkbox.split('_')[1];
@@ -53,7 +53,7 @@
                                 <td vertical-align: top;><center><input class="checkbox" type="checkbox" id=checkbox_{{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
                     </tr>
                     <tr class="bad">
-                            <td colspan="6"><div id={{ feed.id }} class="collapse" style="padding: 5px">This is a test. This is only a test.</div></td>
+                            <td colspan="6"><div id={{ feed.id }} class="collapse" style="padding: 5px">{{ feed.status_summary }}</div></td>
                     </tr>
             {% endif %}
             {% endfor %}
@@ -120,7 +120,31 @@
             {% endfor %}
                 </table>
             </div>
-        {% endif %}
+            <!-- HookLogic Feeds -->
+            <div id="hooklogic" class="w3-container status w3-animate-left" style="display:none">
+                <table class="n4f2">
+                    <tr>
+                        <th>Run&nbsp;ID</th>
+                        <th>Site Name</th>
+                        <th>Feed&nbsp;Date</th>
+                        <th>Status Message</th>
+                    </tr>
+            {% for feed in feedruns %}
+            {% if feed.feed_profile == "hooklogic" %}
+                    <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
+                        <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
+                        <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                        <td><center>{{ feed.last_received }}</center></td>
+                        <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
+                    </tr>
+                    <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
+                        <td colspan="4"><div id={{ feed.id }} class="collapse" style="padding: 5px">{{ feed.status_summary }}</div></td>
+                    </tr>
+            {% endif %}
+            {% endfor %}
+                </table>
+            </div>
+        {% endif %}        
     {% else %}
         <meta http-equiv="refresh" content="0; url=/accounts/login/" />
         <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
