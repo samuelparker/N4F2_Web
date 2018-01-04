@@ -20,7 +20,7 @@ class Command(BaseCommand):
             run_id = hl_feed_response["runId"],
             site_name = hl_feed_response["siteName"],
             feed_profile = "hooklogic",
-            feed_name = hl_feed_response['feedName'].split('using profile')[0],
+            feed_name = hl_feed_response['feedName'].split(' using profile ')[0],
             status_code = hl_feed_response['statusCode'],
             status_summary = hl_feed_response['statusSummary'],
             last_received = hl_feed_response['lastReceived'],
