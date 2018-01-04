@@ -19,6 +19,9 @@ services:
           sleep 1;
         done;
         echo Connected!;
+        cp /code/hlcronjob.txt /etc/crontab;
+        touch /etc/hlcronjob-log.txt;
+        service cron start;
         python manage.py migrate;
         python manage.py runserver 0.0.0.0:8000;"
     volumes:
