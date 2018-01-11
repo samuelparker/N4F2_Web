@@ -2,7 +2,7 @@
 
 {% block content %}
 <center>
-    <p><h1>Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
+    <p><h1 style="padding-left:130px">Feed Runs {{ feed_run_report.time_settings.localtime }}</h1></p>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script>
         var checkbox
@@ -129,8 +129,7 @@
                         <th>Feed&nbsp;Date</th>
                         <th>Status Message</th>
                     </tr>
-            {% for feed in feedruns %}
-            {% if feed.feed_profile == "hooklogic" %}
+            {% for feed in hooklogicruns %}
                     <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
                         <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
@@ -140,7 +139,6 @@
                     <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
                         <td colspan="4"><div id={{ feed.id }} class="collapse" style="padding: 5px">{{ feed.status_summary }}</div></td>
                     </tr>
-            {% endif %}
             {% endfor %}
                 </table>
             </div>
