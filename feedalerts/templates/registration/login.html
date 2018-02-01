@@ -1,3 +1,4 @@
+{% extends "n4f2/base.html" %}
 {% block content %}
 
 {% if form.errors %}
@@ -12,26 +13,38 @@
     <p>Please login to see this page.</p>
     {% endif %}
 {% endif %}
-
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-<div>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</div>
-<div>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</div>
-
-<div>
-  <input type="submit" value="login" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</div>
-</form>
-
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-
+<center>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-5 col-md-3">
+        <div class="form-login">
+        <h4> Welcome to N4F2!</h4>
+        <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}  
+          <!-- <input type="text" id="userName" class="form-control input-sm chat-input" placeholder="username" {{ form.username }}/> -->
+          <div id="userName">
+            <td>{{ form.username.label_tag }}</td>
+            <td class="form-control input-sm chat-input">{{ form.username }}</td>
+          </div>
+          </br>
+          <!-- <input type="text" id="userPassword" class="form-control input-sm chat-input" placeholder="password" {{ form.password }}/> -->
+          <div id="userPassword">
+            <td>{{ form.password.label_tag }}</td>
+            <td class="form-control input-sm chat-input">{{ form.password }}</td>
+          </div>
+          </br>
+          <div class="wrapper">
+          <span class="group-btn">
+            <input class="btn btn-primary btn-md" type="submit" value="login" />
+            <input type="hidden" name="next" value="{{ next }}" />     
+              <!-- <a href="#" class="btn btn-primary btn-md">login <i class="fa fa-sign-in"></i></a> -->
+          </span>
+        </form>
+        {# Assumes you setup the password_reset view in your URLconf #}
+        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</center>
 {% endblock %}
