@@ -7,6 +7,7 @@ from .models import Feedrun, Ignoredsite
 
 # Create your views here.
 def index(request):
+    request.session.set_expiry(600)
     feed_run_report = utils.create_feed_run_report()
     if type(feed_run_report) is str:
         return HttpResponse(feed_run_report)
