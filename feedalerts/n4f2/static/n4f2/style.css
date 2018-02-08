@@ -101,3 +101,7 @@ h4 {
 .wrapper {
     text-align: center;
 }
+
+p.loginError {
+    color: #e62929;
+}
