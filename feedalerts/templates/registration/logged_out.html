@@ -1,5 +1,4 @@
 {% block content %}
-<p>Logged out!</p>  
-
-<a href="{% url 'login'%}">Click here to login again.</a>
+<meta http-equiv="refresh" content="0; url=/accounts/login/" />
+<p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
 {% endblock %}

@@ -1,23 +1,19 @@
 {% extends "n4f2/base.html" %}
 {% block content %}
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
 <center>
   <div class="container">
     <div class="row">
       <div class="col-md-offset-5 col-md-3">
         <div class="form-login">
+          {% if next %}
+              {% if user.is_authenticated %}
+              <p>Your account doesn't have access to this page. To proceed,
+              please login with an account that has access.</p>
+              {% else %}
+              <p>Please login to see this page.</p>
+              {% endif %}
+          {% endif %}
         <h4> Welcome to N4F2!</h4>
         <form method="post" action="{% url 'login' %}">
         {% csrf_token %}  
@@ -33,6 +29,9 @@
             <td class="form-control input-sm chat-input">{{ form.password }}</td>
           </div>
           </br>
+          {% if form.errors %}
+            <p class="loginError">Your username and password didn't match. Please try again.</p>
+          {% endif %}
           <div class="wrapper">
           <span class="group-btn">
             <input class="btn btn-primary btn-md" type="submit" value="login" />
@@ -41,7 +40,7 @@
           </span>
         </form>
         {# Assumes you setup the password_reset view in your URLconf #}
-        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+        <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
         </div>
       </div>
     </div>
