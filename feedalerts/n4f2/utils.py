@@ -91,7 +91,7 @@ def parse_api_response(feed_json, ignore_list, time_settings):
             i += 1
         else:
             if feed_json[i]['lastSuccess'] == None:
-                feed_json[i]['lastSuccess'] = '0000-00-00T00:00:00Z'
+                feed_json[i]['lastSuccess'] = '1969-01-01T00:00:00Z'
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
                 'feedName': feedName,
