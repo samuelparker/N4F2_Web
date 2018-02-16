@@ -14,8 +14,8 @@
             <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
             <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
             <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
             <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'hooklogic')">HookLogic</button>
+            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
             </br>
             {% if user.is_authenticated %}
             <button class="w3-bar-item w3-button" onclick="window.location.href='/accounts/logout/'">Log Out</button>
