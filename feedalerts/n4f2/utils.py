@@ -60,8 +60,8 @@ def create_time_settings_json():
     time_settings = {
         'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
         'pacific': timezone('US/Pacific'),
-        'now': datetime.utcnow() - timedelta(days = 1),
-        'dontReport': datetime.utcnow() - timedelta(days = 30),
+        'now': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 1),
+        'dontReport': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 30),
         'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
     }
 
@@ -91,7 +91,7 @@ def parse_api_response(feed_json, ignore_list, time_settings):
             i += 1
         else:
             if feed_json[i]['lastSuccess'] == None:
-                feed_json[i]['lastSuccess'] = '0000-00-00T00:00:00Z'
+                feed_json[i]['lastSuccess'] = '1969-01-01T00:00:00Z'
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
                 'feedName': feedName,
@@ -106,22 +106,6 @@ def parse_api_response(feed_json, ignore_list, time_settings):
                 }
             }
                       
-            lastrecd_datetime = datetime.strptime(feed_json[i]['lastReceived'], time_settings['utcTimeFormat'])
-
-            if lastrecd_datetime < time_settings['now']:
-                if lastrecd_datetime > time_settings['dontReport']:
-                    parsed_response['late'].append(feed_json[i]['runId'])
-                    feed_run[feed_json[i]['runId']]['statusCode'] = feed_run[feed_json[i]['runId']]['statusCode'] + '_LATE'
-            if feed_json[i]['statusCode'] == 'ERROR' or feed_json[i]['statusCode'] == 'COMPLETE_WITH_FATAL_ERRORS':
-                parsed_response['error'].append(feed_json[i]['runId'])
-            if feed_json[i]['statusCode'] == 'INTERRUPTED':
-                parsed_response['interupt'].append(feed_json[i]['runId'])
-            if feed_json[i]['statusCode'] == 'UNFINISHED':
-                parsed_response['unfinished'].append(feed_json[i]['runId'])
-            if feed_json[i]['statusCode'] == 'POSTPONED_SITE_CONFLICT':
-                parsed_response['postponed'].append(feed_json[i]['runId'])
-            
-            parsed_response['feed_runs'].append(feed_run)
             i += 1
 
     

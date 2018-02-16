@@ -9,16 +9,15 @@ from .models import Feedrun, Ignoredsite
 def index(request):
     request.session.set_expiry(600)
     feed_run_report = utils.create_feed_run_report()
+
     if type(feed_run_report) is str:
         return HttpResponse(feed_run_report)
     else:
         utils.add_feed_runs_to_db(feed_run_report)
-        feedruns = Feedrun.objects.filter(last_received__gte=datetime.now()-timedelta(days=30)).order_by("site_name").order_by("feed_profile", "-last_received").distinct("feed_profile")
-        lateruns = Feedrun.objects.exclude(last_received__gte=datetime.now()-timedelta(days=30)).order_by("site_name")
+        feedruns = Feedrun.objects.order_by("site_name").order_by("feed_profile", "-last_received").distinct("feed_profile")
         hooklogicruns = Feedrun.objects.filter(site_name="HookLogic", last_received__gte=datetime.now()-timedelta(days=1)).order_by("-last_received")
         context = {
             'feedruns': feedruns, 
-            'lateruns': lateruns,
             'hooklogicruns': hooklogicruns,
             'feed_run_report': feed_run_report,
         }
