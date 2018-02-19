@@ -32,7 +32,7 @@
     {% if user.is_authenticated %}    
         {% if feedruns %}
             <!-- Feeds in Errored State --> 
-            <div id="Bad" class="w3-container status w3-animate-left" style="display:none">
+            <div id="Bad" class="w3-container status w3-animate-left" style="display:block">
             <table class="n4f2">
                 <tr>
                     <th>Run&nbsp;ID</th>
@@ -147,7 +147,8 @@
         {% endif %}        
     {% else %}
         <meta http-equiv="refresh" content="0; url=/accounts/login/" />
-        <p><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
+        <p><a href="{% url 'login'%}?next={{request.path}}">You must be logged in to view this page.</a></p>
+        <p>Redirecting to login.</p>
     {% endif %}
 </center>
 {% load static %}
