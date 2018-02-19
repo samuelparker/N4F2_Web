@@ -87,11 +87,15 @@ div.login {
 }
 
 h4 { 
- border:0 solid #fff; 
- border-bottom-width:1px;
- padding-bottom:10px;
- text-align: center;
- font-weight: bolder;
+    border:0 solid #fff; 
+    border-bottom-width:1px;
+    padding-bottom:10px;
+    text-align: center;
+    font-weight: bolder;
+}
+
+a.title {
+    color: #ffffff;
 }
 
 .form-control {
