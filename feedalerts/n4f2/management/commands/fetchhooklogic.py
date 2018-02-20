@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from n4f2.models import Feedrun, Ignoredsite
+from n4f2.models import Site, FeedProfile, Feedrun
 import requests
 
 class Command(BaseCommand):
@@ -17,20 +17,17 @@ class Command(BaseCommand):
         hl_feed_response = self.fetch_hook_feed_status()
         hl_feed_response = hl_feed_response[0]
         fr = Feedrun(
-            run_id = hl_feed_response["runId"],
-            site_name = hl_feed_response["siteName"],
-            feed_profile = "hooklogic",
-            feed_name = hl_feed_response['feedName'].split(' using profile ')[0],
+            id = hl_feed_response["runId"],
+            name = hl_feed_response['feedName'].split(' using profile ')[0],
             status_code = hl_feed_response['statusCode'],
             status_summary = hl_feed_response['statusSummary'],
-            last_received = hl_feed_response['lastReceived'],
-            last_success = hl_feed_response['lastSuccess'],
             run_link = 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(hl_feed_response['runId']),
             console_link = 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(hl_feed_response['runId']),
             notification_sent = False
+            feed_profile = FeedProfile.objects.get(name="hooklogic")
         )
 
-        verify = Feedrun.objects.filter(run_id=fr.run_id)
+        verify = Feedrun.objects.filter(pk=fr.id)
         if verify.exists() == False:
             fr.save()
 
