@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from n4f2 import utils
 
-from .models import Feedrun, Ignoredsite
+from .models import Site, FeedProfile, Feedrun
 
 # Create your views here.
 def index(request):
