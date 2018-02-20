@@ -46,7 +46,7 @@
                 {% if feed.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "ERROR" or feed.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
                         <tr class="bad">
                                     <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.run_id }}</a></center></td>
-                                    <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
+                                    <td class="errorMessage" data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.site_name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile }}</center></td>
                                     <td><center>{{ feed.last_received }}</center></td>
                                     <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
                                     <td><center>{{ feed.last_success }}</center></td>
