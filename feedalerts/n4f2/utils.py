@@ -26,12 +26,42 @@ def add_feed_runs_to_db(feed_run_report):
 
 def update_feed_profile_dates(last_received, last_success, feed_profile_id):
     fp = FeedProfile.objects.get(pk=feed_profile_id)
-    if fp.last_received < last_received:
+    if fp. last_received == None or fp.last_received < last_received:
         fp.last_received = last_received
     if last_success != None and (fp.last_success == None or fp.last_success < last_success):
         fp.last_success = last_success
     
     fp.save()
+
+
+def add_sites_to_db(all_sites):
+    for site in all_sites:
+        s = Site(
+            id = site['id'],
+            name = site['name']            
+        )
+
+        verify_site = Site.objects.filter(pk=s.id)
+        if verify_site.exists() == False:
+            s.save()
+
+
+def add_profiles_to_db(all_profiles):
+    for profile in all_profiles:
+        verify_site = Site.objects.filter(pk=profile['site_id'])
+        if verify_site.exists() == True:
+            fp = FeedProfile(
+                id = profile['id'],
+                name = profile['feedname'],
+                site = Site.objects.get(pk=profile['site_id'])
+            )
+
+            verify_profile = FeedProfile.objects.filter(pk=fp.id)
+            if verify_profile.exists() == False:
+                fp.save()
+        else:
+            print(profile)
+
 
 
 def parse_site_json_data(site_json):
@@ -46,6 +76,19 @@ def parse_site_json_data(site_json):
     
     return all_sites
 
+def parse_feed_profile_json_data(profile_json):
+    data = json.load(open(profile_json))
+    all_profiles = []
+    for profile in data['feed_profiles']:
+        profile_data = {
+            'id': int(profile['profileid']),
+            'feedname': profile['feedname'],
+            'site_id': int(profile['site_id'])
+        }
+        all_profiles.append(profile_data)
+
+    return all_profiles
+        
 
 def create_feed_run_report():
     feed_json = fetch_feed_status()
