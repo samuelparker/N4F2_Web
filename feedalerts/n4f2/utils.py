@@ -1,7 +1,7 @@
 from n4f2.models import Site, FeedProfile, Feedrun
 from datetime import datetime, timedelta
 from pytz import timezone
-import requests, pytz, time
+import requests, pytz, time, json
 
 
 def add_feed_runs_to_db(feed_run_report):
@@ -32,6 +32,20 @@ def update_feed_profile_dates(last_received, last_success, feed_profile_id):
         fp.last_success = last_success
     
     fp.save()
+
+
+def parse_site_json_data(site_json):
+    data = json.load(open(site_json))
+    all_sites = []
+    for site in data['sites']:
+        site_data = {
+            'id': site['id'],
+            'name': site['name']
+        }
+        all_sites.append(site_data)
+    
+    return all_sites
+
 
 def create_feed_run_report():
     feed_json = fetch_feed_status()
