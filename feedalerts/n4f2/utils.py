@@ -1,4 +1,4 @@
-from n4f2.models import Feedrun, Ignoredsite
+from n4f2.models import Site, FeedProfile, Feedrun
 from datetime import datetime, timedelta
 from pytz import timezone
 import requests, pytz, time
@@ -8,23 +8,30 @@ def add_feed_runs_to_db(feed_run_report):
     for run in feed_run_report['feed_run_details']['feed_runs']:
             for key in run.keys():
                 fr = Feedrun(
-                    run_id = key,
-                    site_name = run[key]['siteName'],
-                    feed_profile = run[key]['feedProfile'],
+                    id = key,
                     feed_name = run[key]['feedName'],
                     status_code = run[key]['statusCode'],
                     status_summary = run[key]['statusSummary'],
-                    last_received = run[key]['lastReceived'],
-                    last_success = run[key]['lastSuccess'],
                     run_link = run[key]['runLink'],
                     console_link = run[key]['consoleLink'],
-                    notification_sent = False
+                    feed_profile = FeedProfile.objects.get(name=run[key]['feedProfile']),
                 )
 
-                verify = Feedrun.objects.filter(run_id=fr.run_id)
-                if verify.exists() == False:
+                update_feed_profile_dates(run[key]['lastReceived'], run[key]['lastSuccess'], key)
+
+                verify_feed = Feedrun.objects.filter(id=fr.id)
+                if verify_feed.exists() == False:
                     fr.save()
 
+
+def update_feed_profile_dates(last_received, last_success, feed_profile_id):
+    fp = FeedProfile.objects.get(pk=feed_profile_id)
+    if fp.last_received < last_received:
+        fp.last_received = last_received
+    if last_success != None and (fp.last_success == None or fp.last_success < last_success):
+        fp.last_success = last_success
+    
+    fp.save()
 
 def create_feed_run_report():
     feed_json = fetch_feed_status()
@@ -90,8 +97,8 @@ def parse_api_response(feed_json, ignore_list, time_settings):
         if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
             i += 1
         else:
-            if feed_json[i]['lastSuccess'] == None:
-                feed_json[i]['lastSuccess'] = '1969-01-01T00:00:00Z'
+            # if feed_json[i]['lastSuccess'] == None:
+            #     feed_json[i]['lastSuccess'] = '1969-01-01T00:00:00Z'
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
                 'feedName': feedName,
