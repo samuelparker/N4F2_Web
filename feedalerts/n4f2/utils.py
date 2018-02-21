@@ -104,15 +104,6 @@ def fetch_feed_status():
         return response.status_code
 
 
-def create_ignored_site_list():
-    ignored_site_list = []
-    site_objects = Ignoredsite.objects.all()
-    for site in site_objects:
-        ignored_site_list.append(site.site_name)
-    
-    return ignored_site_list
-
-
 def create_time_settings_json():
     time_settings = {
         'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
