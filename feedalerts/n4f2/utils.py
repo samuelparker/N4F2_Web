@@ -45,6 +45,24 @@ def add_sites_to_db(all_sites):
         if verify_site.exists() == False:
             s.save()
 
+
+def add_profiles_to_db(all_profiles):
+    for profile in all_profiles:
+        verify_site = Site.objects.filter(pk=profile['site_id'])
+        if verify_site.exists() == True:
+            fp = FeedProfile(
+                id = profile['id'],
+                name = profile['feedname'],
+                site = Site.objects.get(pk=profile['site_id'])
+            )
+
+            verify_profile = FeedProfile.objects.filter(pk=fp.id)
+            if verify_profile.exists() == False:
+                fp.save()
+        else:
+            print(profile)
+
+
 def parse_feedherder_json_data(feedherder_json):
     data = json.load(open(feedherder_json))
     all_sites = []
@@ -64,23 +82,6 @@ def parse_feedherder_json_data(feedherder_json):
         all_profiles.append(profile)
 
     return { 'all_sites': all_sites, 'all_profiles': all_profiles }
-
-
-def add_profiles_to_db(all_profiles):
-    for profile in all_profiles:
-        verify_site = Site.objects.filter(pk=profile['site_id'])
-        if verify_site.exists() == True:
-            fp = FeedProfile(
-                id = profile['id'],
-                name = profile['feedname'],
-                site = Site.objects.get(pk=profile['site_id'])
-            )
-
-            verify_profile = FeedProfile.objects.filter(pk=fp.id)
-            if verify_profile.exists() == False:
-                fp.save()
-        else:
-            print(profile)
 
         
 def create_feed_run_report():
