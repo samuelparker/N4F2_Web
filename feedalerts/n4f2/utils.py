@@ -65,7 +65,7 @@ def parse_feedherder_json_data(feedherder_json):
 
     return { 'all_sites': all_sites, 'all_profiles': all_profiles }
 
-    
+
 def add_profiles_to_db(all_profiles):
     for profile in all_profiles:
         verify_site = Site.objects.filter(pk=profile['site_id'])
@@ -82,34 +82,7 @@ def add_profiles_to_db(all_profiles):
         else:
             print(profile)
 
-
-
-def parse_site_json_data(site_json):
-    data = json.load(open(site_json))
-    all_sites = []
-    for site in data['sites']:
-        site_data = {
-            'id': site['id'],
-            'name': site['name']
-        }
-        all_sites.append(site_data)
-    
-    return all_sites
-
-def parse_feed_profile_json_data(profile_json):
-    data = json.load(open(profile_json))
-    all_profiles = []
-    for profile in data['feed_profiles']:
-        profile_data = {
-            'id': int(profile['profileid']),
-            'feedname': profile['feedname'],
-            'site_id': int(profile['site_id'])
-        }
-        all_profiles.append(profile_data)
-
-    return all_profiles
         
-
 def create_feed_run_report():
     feed_json = fetch_feed_status()
     if type(feed_json) is int:
