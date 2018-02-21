@@ -108,7 +108,7 @@ def create_feed_run_report():
         return "Feed Status API returned error code " + str(feed_json)
 
     time_settings = create_time_settings_json()
-    feed_run_details = parse_api_response(feed_json, ignore_list, time_settings)
+    feed_run_details = parse_api_response(feed_json, time_settings)
 
     return {'ignore_list': ignore_list, 'time_settings': time_settings, 'feed_run_details': feed_run_details }
 
