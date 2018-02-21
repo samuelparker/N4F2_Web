@@ -45,7 +45,27 @@ def add_sites_to_db(all_sites):
         if verify_site.exists() == False:
             s.save()
 
+def parse_feedherder_json_data(feedherder_json):
+    data = json.load(open(feedherder_json))
+    all_sites = []
+    all_profiles = []
+    for process in data['processes']:
+        site = {
+            'id': process['site']['id'],
+            'name': process['site']['name']
+        }
+        profile = {
+            'id': process['id'],
+            'name': process['name'].rstrip('\n'),
+            'watching': process['watching'],
+            'site_id': process['site']['id']
+        }
+        all_sites.append(site)
+        all_profiles.append(profile)
 
+    return { 'all_sites': all_sites, 'all_profiles': all_profiles }
+
+    
 def add_profiles_to_db(all_profiles):
     for profile in all_profiles:
         verify_site = Site.objects.filter(pk=profile['site_id'])
