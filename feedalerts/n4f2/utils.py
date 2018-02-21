@@ -49,10 +49,11 @@ def add_sites_to_db(all_sites):
 def add_profiles_to_db(all_profiles):
     for profile in all_profiles:
         verify_site = Site.objects.filter(pk=profile['site_id'])
+        uniquify_profile_name(profile)
         if verify_site.exists() == True:
             fp = FeedProfile(
                 id = profile['id'],
-                name = profile['feedname'],
+                name = profile['name'],
                 site = Site.objects.get(pk=profile['site_id'])
             )
 
@@ -61,6 +62,14 @@ def add_profiles_to_db(all_profiles):
                 fp.save()
         else:
             print(profile)
+
+        
+def uniquify_profile_name(profile):
+    profile_query = FeedProfile.objects.filter(name=profile['name'])
+    if profile_query.count() >= 1:
+        profile['name'] = profile['name'] + '_' + str(profile['id'])
+
+    return profile
 
 
 def parse_feedherder_json_data(feedherder_json):
