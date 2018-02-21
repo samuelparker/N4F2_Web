@@ -24,6 +24,11 @@ def add_feed_runs_to_db(feed_run_report):
                     fr.save()
 
 
+def add_sites_and_profiles_to_db(feedherder_data):
+    add_sites_to_db(feedherder_data['all_sites'])
+    add_profiles_to_db(feedherder_data['all_profiles'])
+
+
 def update_feed_profile_dates(last_received, last_success, feed_profile_id):
     fp = FeedProfile.objects.get(pk=feed_profile_id)
     if fp. last_received == None or fp.last_received < last_received:
@@ -49,7 +54,7 @@ def add_sites_to_db(all_sites):
 def add_profiles_to_db(all_profiles):
     for profile in all_profiles:
         verify_site = Site.objects.filter(pk=profile['site_id'])
-        uniquify_profile_name(profile)
+        uniqify_profile_name(profile)
         if verify_site.exists() == True:
             fp = FeedProfile(
                 id = profile['id'],
@@ -64,7 +69,7 @@ def add_profiles_to_db(all_profiles):
             print(profile)
 
         
-def uniquify_profile_name(profile):
+def uniqify_profile_name(profile):
     profile_query = FeedProfile.objects.filter(name=profile['name'])
     if profile_query.count() >= 1:
         profile['name'] = profile['name'] + '_' + str(profile['id'])
