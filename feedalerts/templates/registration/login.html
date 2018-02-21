@@ -1,49 +1,45 @@
 {% extends "n4f2/base.html" %}
 {% block content %}
-
-<center>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-offset-5 col-md-3">
-        <div class="form-login">
-          {% if next %}
-              {% if user.is_authenticated %}
-              <p>Your account doesn't have access to this page. To proceed,
-              please login with an account that has access.</p>
-              {% else %}
-              <p>Please login to see this page.</p>
-              {% endif %}
-          {% endif %}
-        <h4> Welcome to N4F2!</h4>
-        <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}  
-          <!-- <input type="text" id="userName" class="form-control input-sm chat-input" placeholder="username" {{ form.username }}/> -->
-          <div id="userName">
-            <td>{{ form.username.label_tag }}</td>
-            <td class="form-control input-sm chat-input">{{ form.username }}</td>
+  <center>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-offset-5 col-md-3">
+          <div class="form-login">
+            {% if next %}
+                {% if user.is_authenticated %}
+                <p>Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+                {% else %}
+                <p>Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+          <h4> Welcome to N4F2!</h4>
+          <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}  
+            <div id="userName">
+              <td>{{ form.username.label_tag }}</td>
+              <td class="form-control input-sm chat-input">{{ form.username }}</td>
+            </div>
+            </br>
+            <div id="userPassword">
+              <td>{{ form.password.label_tag }}</td>
+              <tr><td class="form-control input-sm chat-input">{{ form.password }}</td>
+            </div>
+            </br>
+            {% if form.errors %}
+              <p class="loginError">Your username and password didn't match. Please try again.</p>
+            {% endif %}
+            <div class="wrapper">
+            <span class="group-btn">
+              <input class="btn btn-primary btn-md" type="submit" value="login" />
+              <input type="hidden" name="next" value="{{ next }}" />
+            </span>
+          </form>
+          {# Assumes you setup the password_reset view in your URLconf #}
+          <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
           </div>
-          </br>
-          <!-- <input type="text" id="userPassword" class="form-control input-sm chat-input" placeholder="password" {{ form.password }}/> -->
-          <div id="userPassword">
-            <td>{{ form.password.label_tag }}</td>
-            <td class="form-control input-sm chat-input">{{ form.password }}</td>
-          </div>
-          </br>
-          {% if form.errors %}
-            <p class="loginError">Your username and password didn't match. Please try again.</p>
-          {% endif %}
-          <div class="wrapper">
-          <span class="group-btn">
-            <input class="btn btn-primary btn-md" type="submit" value="login" />
-            <input type="hidden" name="next" value="{{ next }}" />     
-              <!-- <a href="#" class="btn btn-primary btn-md">login <i class="fa fa-sign-in"></i></a> -->
-          </span>
-        </form>
-        {# Assumes you setup the password_reset view in your URLconf #}
-        <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
         </div>
       </div>
     </div>
-  </div>
-</center>
+  </center>
 {% endblock %}

@@ -10,15 +10,18 @@
     </head>
     <body>
         <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:130px">
-            <h5 class="w3-bar-item" onclick="openLink(event, 'Menu')">Menu</h5>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'hooklogic')">HookLogic</button>
-            <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
-            </br>
+            <h4><a class="title" href="{% url 'n4f2:index' %}">N4F2</a></h4>
             {% if user.is_authenticated %}
-            <button class="w3-bar-item w3-button" onclick="window.location.href='/accounts/logout/'">Log Out</button>
+                {% if request.path == "/n4f2/" %}
+                <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Bad')">Error</button>
+                <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Late')">Late</button>
+                <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'Complete')">Complete</button>
+                <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'hooklogic')">HookLogic</button>
+                <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'abandon')">Abandoned</button>
+                </br>
+                {% endif %}
+            <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/accounts/logout/'">Log Out</button>
+            <button class="w3-bar-item w3-button tablink" onclick="window.location.href='/accounts/password_change/'">Change Password</button>
             {% endif %}
         </div>
         <div>

@@ -38,6 +38,12 @@ td {
     border-color: #E1EEF4;
     padding: 0px 3px;
 }
+
+td.errorMessage:hover {
+    color: #808080;
+    cursor: pointer;
+}
+
 tr.ok { 
     background-color: #c0ffc0;
     border-color: #E1EEF4;
@@ -87,11 +93,24 @@ div.login {
 }
 
 h4 { 
- border:0 solid #fff; 
- border-bottom-width:1px;
- padding-bottom:10px;
- text-align: center;
- font-weight: bolder;
+    border:0 solid #fff; 
+    border-bottom-width:1px;
+    padding-bottom:10px;
+    text-align: center;
+    font-weight: bolder;
+}
+
+a.title {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+a.title:hover {
+    color: #808080;
+}
+
+button.tablink:hover {
+    color: #808080;
 }
 
 .form-control {
