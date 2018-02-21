@@ -35,7 +35,7 @@ def add_sites_and_profiles_to_db(feedherder_data):
 
 def update_feed_profile_dates(last_received, last_success, feed_profile_id):
     fp = FeedProfile.objects.get(pk=feed_profile_id)
-    if fp. last_received == None or fp.last_received < last_received:
+    if fp.last_received == None or fp.last_received < last_received:
         fp.last_received = last_received
     if last_success != None and (fp.last_success == None or fp.last_success < last_success):
         fp.last_success = last_success
@@ -72,7 +72,7 @@ def add_profiles_to_db(all_profiles):
         else:
             print(profile)
 
-        
+
 def uniqify_profile_name(profile):
     profile_query = FeedProfile.objects.filter(name=profile['name'])
     if profile_query.count() >= 1:
@@ -110,7 +110,7 @@ def create_feed_run_report():
     time_settings = create_time_settings_json()
     feed_run_details = parse_api_response(feed_json, time_settings)
 
-    return {'ignore_list': ignore_list, 'time_settings': time_settings, 'feed_run_details': feed_run_details }
+    return {'time_settings': time_settings, 'feed_run_details': feed_run_details }
 
 
 def fetch_feed_status():
@@ -133,46 +133,36 @@ def create_time_settings_json():
 
     return time_settings
 
+def format_date_response(date_string):
+    if date_string != None:
+        date_string = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.UTC)
 
-def parse_api_response(feed_json, ignore_list, time_settings):
-    parsed_response = {
-        'feed_runs': [],
-        'late': [],
-        'error': [],
-        'interupt': [],
-        'unfinished': [],
-        'postponed': []
-        }
+    return date_string
 
+def parse_api_response(feed_json, time_settings):
+    feed_runs = []
     i = 0
     while i < len(feed_json):
-        yes = 0
-        for index in range(len(ignore_list)):
-            if feed_json[i]['siteName'] == ignore_list[index]:
-                i += 1
-                yes = 1
-        if yes == 1:
-            continue
         if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
             i += 1
         else:
-            # if feed_json[i]['lastSuccess'] == None:
-            #     feed_json[i]['lastSuccess'] = '1969-01-01T00:00:00Z'
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
                 'feedName': feedName,
                 'feedProfile': feedProfile.rstrip('\n'),
                 'statusCode': feed_json[i]['statusCode'],
                 'statusSummary': feed_json[i]['statusSummary'],
-                'lastReceived': feed_json[i]['lastReceived'],
-                'lastSuccess': feed_json[i]['lastSuccess'],
+                'lastReceived': format_date_response(feed_json[i]['lastReceived']),
+                'lastSuccess': format_date_response(feed_json[i]['lastSuccess']),
                 'siteName': feed_json[i]['siteName'],
                 'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId']),
                 'consoleLink': 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(feed_json[i]['runId'])
                 }
             }
-                      
+
+            feed_runs.append(feed_run)   
+
             i += 1
 
     
-    return parsed_response
+    return feed_runs
