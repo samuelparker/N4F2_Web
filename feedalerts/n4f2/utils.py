@@ -107,7 +107,6 @@ def create_feed_run_report():
     if type(feed_json) is int:
         return "Feed Status API returned error code " + str(feed_json)
 
-    ignore_list = create_ignored_site_list()
     time_settings = create_time_settings_json()
     feed_run_details = parse_api_response(feed_json, ignore_list, time_settings)
 
