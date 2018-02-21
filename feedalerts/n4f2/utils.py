@@ -5,19 +5,23 @@ import requests, pytz, time, json
 
 
 def add_feed_runs_to_db(feed_run_report):
-    for run in feed_run_report['feed_run_details']['feed_runs']:
-            for key in run.keys():
-                fr = Feedrun(
-                    id = key,
-                    feed_name = run[key]['feedName'],
-                    status_code = run[key]['statusCode'],
-                    status_summary = run[key]['statusSummary'],
-                    run_link = run[key]['runLink'],
-                    console_link = run[key]['consoleLink'],
-                    feed_profile = FeedProfile.objects.get(name=run[key]['feedProfile']),
-                )
+    for feed_run in feed_run_report['feed_run_details']:
+            for key in feed_run.keys():
+                profile_name = feed_run[key]['feedProfile']
+                if FeedProfile.objects.filter(name=profile_name).exists():
+                    fr = Feedrun(
+                        id = key,
+                        name = feed_run[key]['feedName'],
+                        status_code = feed_run[key]['statusCode'],
+                        status_summary = feed_run[key]['statusSummary'],
+                        run_link = feed_run[key]['runLink'],
+                        console_link = feed_run[key]['consoleLink'],
+                        feed_profile = FeedProfile.objects.get(name=profile_name),
+                    )
+                else:
+                    print(profile_name)
 
-                update_feed_profile_dates(run[key]['lastReceived'], run[key]['lastSuccess'], key)
+                update_feed_profile_dates(feed_run[key]['lastReceived'], feed_run[key]['lastSuccess'], fr.feed_profile_id)
 
                 verify_feed = Feedrun.objects.filter(id=fr.id)
                 if verify_feed.exists() == False:
