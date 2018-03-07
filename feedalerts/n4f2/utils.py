@@ -18,14 +18,15 @@ def add_feed_runs_to_db(feed_run_report):
                         console_link = feed_run[key]['consoleLink'],
                         feed_profile = FeedProfile.objects.get(name=profile_name),
                     )
+
+                    update_feed_profile_dates(feed_run[key]['lastReceived'], feed_run[key]['lastSuccess'], fr.feed_profile_id)
+
+                    verify_feed = Feedrun.objects.filter(id=fr.id)
+                    if verify_feed.exists() == False:
+                        fr.save()
                 else:
                     print(profile_name)
 
-                update_feed_profile_dates(feed_run[key]['lastReceived'], feed_run[key]['lastSuccess'], fr.feed_profile_id)
-
-                verify_feed = Feedrun.objects.filter(id=fr.id)
-                if verify_feed.exists() == False:
-                    fr.save()
 
 
 def add_sites_and_profiles_to_db(feedherder_data):
