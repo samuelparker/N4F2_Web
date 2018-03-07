@@ -18,7 +18,7 @@ def index(request):
         hooklogicruns = Feedrun.objects.filter(feed_profile__name="hooklogic", feed_profile__last_received__gte=datetime.now()-timedelta(days=1)).order_by("-feed_profile__last_received")
         context = {
             'feedruns': feedruns, 
-            # 'hooklogicruns': hooklogicruns,
+            'hooklogicruns': hooklogicruns,
             'feed_run_report': feed_run_report,
         }
         return render(request, 'n4f2/index.html', context)
