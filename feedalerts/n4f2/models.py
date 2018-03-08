@@ -18,7 +18,7 @@ class FeedProfile(models.Model):
         return self.name
 
 
-class Feedrun(models.Model):
+class FeedRun(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     status_code = models.CharField(max_length=200)

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from n4f2.models import Site, FeedProfile, Feedrun
+from n4f2.models import Site, FeedProfile, FeedRun
 import requests
 
 class Command(BaseCommand):
@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def add_hook_feed_to_db(self):
         hl_feed_response = self.fetch_hook_feed_status()
         hl_feed_response = hl_feed_response[0]
-        fr = Feedrun(
+        fr = FeedRun(
             id = hl_feed_response["runId"],
             name = hl_feed_response['feedName'].split(' using profile ')[0],
             status_code = hl_feed_response['statusCode'],
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             feed_profile = FeedProfile.objects.get(name="hooklogic")
         )
 
-        verify = Feedrun.objects.filter(pk=fr.id)
+        verify = FeedRun.objects.filter(pk=fr.id)
         if verify.exists() == False:
             fr.save()
 
