@@ -43,13 +43,13 @@
                     <th>Notification&nbsp;Sent</th>
                 </tr>
             {% for feed in feedruns %}
-                {% if feed.feed_profile.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "ERROR" or feed.feed_profile.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
+                {% if feed.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "ERROR" or feed.last_received >= feed_run_report.time_settings.dontReport and feed.status_code == "COMPLETE_WITH_FATAL_ERRORS" %}
                         <tr class="bad">
                                     <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</a></center></td>
                                     <td class="errorMessage" data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
                                     <td><center>{{ feed.last_received }}</center></td>
                                     <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
-                                    <td><center>{{ feed.feed_profile.last_success }}</center></td>
+                                    <td><center>{{ feed.last_success }}</center></td>
                                     <td vertical-align: top;><center><input class="checkbox" type="checkbox" id=checkbox_{{ feed.id }} {% if feed.notification_sent == True %} checked="checked"{% endif %}></center></td>
                         </tr>
                         <tr class="bad">
@@ -69,11 +69,11 @@
                         <th>Status Message</th>
                     </tr>
             {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE_LATE" and feed.feed_profile.last_received >= feed_run_report.time_settings.dontReport %}
+                {% if feed.status_code == "COMPLETE_LATE" and feed.last_received >= feed_run_report.time_settings.dontReport %}
                     <tr class="delayed">
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</center></td>
                         <td><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
-                        <td><center>{{ feed.feed_profile.last_received }}</center></td>
+                        <td><center>{{ feed.last_received }}</center></td>
                         <td><center>{{ feed.status_code }}</center></td>
                     </tr>
                 {% endif %}
@@ -90,11 +90,11 @@
                         <th>Status Message</th>
                     </tr>
             {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE" and feed.feed_profile.last_received >= feed_run_report.time_settings.dontReport %}
+                {% if feed.status_code == "COMPLETE" and feed.last_received >= feed_run_report.time_settings.dontReport %}
                     <tr class="ok">
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</center></td>
                         <td><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
-                        <td><center>{{ feed.feed_profile.last_received }}</center></td>
+                        <td><center>{{ feed.last_received }}</center></td>
                         <td><center>{{ feed.status_code }}</center></td>
                     </tr>
                 {% endif %}
@@ -111,11 +111,11 @@
                         <th>Status Message</th>
                     </tr>
             {% for feed in feedruns %}
-                {% if feed.feed_profile.last_received < feed_run_report.time_settings.dontReport %}
+                {% if feed.last_received < feed_run_report.time_settings.dontReport %}
                         <tr class="abandon">
                             <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</center></td>
                             <td><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
-                            <td><center>{{ feed.feed_profile.last_received }}</center></td>
+                            <td><center>{{ feed.last_received }}</center></td>
                             <td><center>{{ feed.status_code }}</center></td>
                         </tr>
                 {% endif %}
@@ -135,7 +135,7 @@
                     <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</a></center></td>
                         <td data-toggle="collapse" data-target=#{{ feed.id }}><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
-                        <td><center>{{ feed.feed_profile.last_received }}</center></td>
+                        <td><center>{{ feed.last_received }}</center></td>
                         <td><center><a href= {{ feed.console_link }} target="_blank">{{ feed.status_code }}</a></center></td>
                     </tr>
                     <tr {% if feed.status_code == "ERROR" %} class="bad" {% elif feed.status_code == "POSTPONED_SITE_CONFLICT" %} class="delayed" {% elif feed.status_code == "UNFINISHED" %} class="delayed" {% else %} class="ok" {% endif %}>
