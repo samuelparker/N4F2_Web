@@ -1,4 +1,4 @@
-from n4f2.models import Site, FeedProfile, Feedrun
+from n4f2.models import Site, FeedProfile, FeedRun
 from datetime import datetime, timedelta
 from pytz import timezone
 import requests, pytz, time, json
@@ -9,7 +9,7 @@ def add_feed_runs_to_db(feed_run_report):
             for key in feed_run.keys():
                 profile_name = feed_run[key]['feedProfile']
                 if FeedProfile.objects.filter(name=profile_name).exists():
-                    fr = Feedrun(
+                    fr = FeedRun(
                         id = key,
                         name = feed_run[key]['feedName'],
                         status_code = feed_run[key]['statusCode'],
@@ -23,7 +23,7 @@ def add_feed_runs_to_db(feed_run_report):
 
                     # update_feed_profile_dates(feed_run[key]['lastReceived'], feed_run[key]['lastSuccess'], fr.feed_profile_id)
 
-                    verify_feed = Feedrun.objects.filter(id=fr.id)
+                    verify_feed = FeedRun.objects.filter(id=fr.id)
                     if verify_feed.exists() == False:
                         fr.save()
                 else:

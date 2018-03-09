@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from n4f2 import utils
 
-from .models import Site, FeedProfile, Feedrun
+from .models import Site, FeedProfile, FeedRun
 
 # Create your views here.
 def index(request):
@@ -14,8 +14,8 @@ def index(request):
         return HttpResponse(feed_run_report)
     else:
         utils.add_feed_runs_to_db(feed_run_report)
-        feedruns = Feedrun.objects.order_by("feed_profile__name", "-last_received").distinct("feed_profile__name")
-        hooklogicruns = Feedrun.objects.filter(feed_profile__name="hooklogic", last_received__gte=datetime.now()-timedelta(days=1)).order_by("-last_received")
+        feedruns = FeedRun.objects.order_by("feed_profile__name", "-last_received").distinct("feed_profile__name")
+        hooklogicruns = FeedRun.objects.filter(feed_profile__name="hooklogic", last_received__gte=datetime.now()-timedelta(days=1)).order_by("-last_received")
         context = {
             'feedruns': feedruns, 
             'hooklogicruns': hooklogicruns,
