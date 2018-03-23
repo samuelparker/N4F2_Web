@@ -158,14 +158,14 @@ def parse_api_response(feed_json, time_settings):
                 'lastReceived': format_date_response(feed_json[i]['lastReceived']),
                 'lastSuccess': format_date_response(feed_json[i]['lastSuccess']),
                 'siteName': feed_json[i]['siteName'],
+                'siteId': feed_json[i]['siteId'],
+                'feedProfileId': feed_json[i]['feedProfileId'],
                 'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId']),
                 'consoleLink': 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(feed_json[i]['runId'])
                 }
             }
 
             feed_runs.append(feed_run)   
-
             i += 1
 
-    
     return feed_runs
