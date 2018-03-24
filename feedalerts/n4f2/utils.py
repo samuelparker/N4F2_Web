@@ -65,6 +65,7 @@ def create_time_settings_json():
         'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
         'pacific': timezone('US/Pacific'),
         'now': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 1),
+        'late': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 2),
         'dontReport': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 30),
         'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
     }
