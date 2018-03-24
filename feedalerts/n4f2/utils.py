@@ -105,6 +105,7 @@ def parse_api_response(feed_json, time_settings):
             i += 1
 
     return feed_runs
+
 '''
 begin legacy methods for bulk import of site and profile data from Feed Herder
 
