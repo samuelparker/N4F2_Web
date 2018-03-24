@@ -7,10 +7,24 @@ import requests, pytz, time, json
 def add_feed_runs_to_db(feed_run_report):
     for feed_run in feed_run_report['feed_run_details']:
             for key in feed_run.keys():
-                profile_name = feed_run[key]['feedProfile']
-                if FeedProfile.objects.filter(name=profile_name).exists():
-                    fr = FeedRun(
-                        id = key,
+                site = Site.objects.get_or_create(
+                    id = feed_run[key]['siteId'], 
+                    name = feed_run[key]['siteName']
+                )
+
+                profile = FeedProfile.objects.get_or_create(
+                    id = feed_run[key]['feedProfileId'], 
+                    name = feed_run[key]['feedProfile'], 
+                    site = site[0]
+                )
+
+                try: 
+                    fr = FeedRun.objects.get(pk = key)
+                    if fr.last_success == None or fr.last_success < feed_run[key]['lastSuccess']:
+                        fr.last_success = feed_run[key]['lastSuccess']
+                        fr.save()
+                except FeedRun.DoesNotExist:    
+                    fr = FeedRun(id = key,
                         name = feed_run[key]['feedName'],
                         status_code = feed_run[key]['statusCode'],
                         status_summary = feed_run[key]['statusSummary'],
@@ -18,16 +32,9 @@ def add_feed_runs_to_db(feed_run_report):
                         console_link = feed_run[key]['consoleLink'],
                         last_received = feed_run[key]['lastReceived'],
                         last_success = feed_run[key]['lastSuccess'],
-                        feed_profile = FeedProfile.objects.get(name=profile_name),
+                        feed_profile = profile[0]
                     )
-
-                    # update_feed_profile_dates(feed_run[key]['lastReceived'], feed_run[key]['lastSuccess'], fr.feed_profile_id)
-
-                    verify_feed = FeedRun.objects.filter(id=fr.id)
-                    if verify_feed.exists() == False:
-                        fr.save()
-                else:
-                    print(profile_name)
+                    fr.save()
 
        
 def create_feed_run_report():
