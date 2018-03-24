@@ -84,6 +84,8 @@ def parse_api_response(feed_json, time_settings):
     while i < len(feed_json):
         if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
             i += 1
+        elif format_date_response(feed_json[i]['lastReceived']) >= datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 90):
+            i += 1
         else:
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
             feed_run = { feed_json[i]['runId']: {
