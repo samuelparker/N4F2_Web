@@ -29,7 +29,73 @@ def add_feed_runs_to_db(feed_run_report):
                 else:
                     print(profile_name)
 
+       
+def create_feed_run_report():
+    feed_json = fetch_feed_status()
+    if type(feed_json) is int:
+        return "Feed Status API returned error code " + str(feed_json)
 
+    time_settings = create_time_settings_json()
+    feed_run_details = parse_api_response(feed_json, time_settings)
+
+    return {'time_settings': time_settings, 'feed_run_details': feed_run_details }
+
+
+def fetch_feed_status():
+    response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog')
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return response.status_code
+
+
+def create_time_settings_json():
+    time_settings = {
+        'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
+        'pacific': timezone('US/Pacific'),
+        'now': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 1),
+        'dontReport': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 30),
+        'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
+    }
+
+    return time_settings
+
+def format_date_response(date_string):
+    if date_string != None:
+        date_string = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.UTC)
+
+    return date_string
+
+def parse_api_response(feed_json, time_settings):
+    feed_runs = []
+    i = 0
+    while i < len(feed_json):
+        if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
+            i += 1
+        else:
+            feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
+            feed_run = { feed_json[i]['runId']: {
+                'feedName': feedName,
+                'feedProfile': feedProfile.rstrip('\n'),
+                'statusCode': feed_json[i]['statusCode'],
+                'statusSummary': feed_json[i]['statusSummary'],
+                'lastReceived': format_date_response(feed_json[i]['lastReceived']),
+                'lastSuccess': format_date_response(feed_json[i]['lastSuccess']),
+                'siteName': feed_json[i]['siteName'],
+                'siteId': feed_json[i]['siteId'],
+                'feedProfileId': feed_json[i]['feedProfileId'],
+                'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId']),
+                'consoleLink': 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(feed_json[i]['runId'])
+                }
+            }
+
+            feed_runs.append(feed_run)   
+            i += 1
+
+    return feed_runs
+'''
+begin legacy methods for bulk import of site and profile data from Feed Herder
 
 def add_sites_and_profiles_to_db(feedherder_data):
     add_sites_to_db(feedherder_data['all_sites'])
@@ -104,68 +170,5 @@ def parse_feedherder_json_data(feedherder_json):
 
     return { 'all_sites': all_sites, 'all_profiles': all_profiles }
 
-        
-def create_feed_run_report():
-    feed_json = fetch_feed_status()
-    if type(feed_json) is int:
-        return "Feed Status API returned error code " + str(feed_json)
-
-    time_settings = create_time_settings_json()
-    feed_run_details = parse_api_response(feed_json, time_settings)
-
-    return {'time_settings': time_settings, 'feed_run_details': feed_run_details }
-
-
-def fetch_feed_status():
-    response = requests.get('https://portal.richrelevance.com/feedstatus/v1/?feedType=catalog')
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return response.status_code
-
-
-def create_time_settings_json():
-    time_settings = {
-        'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
-        'pacific': timezone('US/Pacific'),
-        'now': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 1),
-        'dontReport': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 30),
-        'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
-    }
-
-    return time_settings
-
-def format_date_response(date_string):
-    if date_string != None:
-        date_string = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.UTC)
-
-    return date_string
-
-def parse_api_response(feed_json, time_settings):
-    feed_runs = []
-    i = 0
-    while i < len(feed_json):
-        if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
-            i += 1
-        else:
-            feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
-            feed_run = { feed_json[i]['runId']: {
-                'feedName': feedName,
-                'feedProfile': feedProfile.rstrip('\n'),
-                'statusCode': feed_json[i]['statusCode'],
-                'statusSummary': feed_json[i]['statusSummary'],
-                'lastReceived': format_date_response(feed_json[i]['lastReceived']),
-                'lastSuccess': format_date_response(feed_json[i]['lastSuccess']),
-                'siteName': feed_json[i]['siteName'],
-                'siteId': feed_json[i]['siteId'],
-                'feedProfileId': feed_json[i]['feedProfileId'],
-                'runLink': 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(feed_json[i]['runId']),
-                'consoleLink': 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(feed_json[i]['runId'])
-                }
-            }
-
-            feed_runs.append(feed_run)   
-            i += 1
-
-    return feed_runs
+end legacy methods for bulk import of site and profile data from Feed Herder
+'''
