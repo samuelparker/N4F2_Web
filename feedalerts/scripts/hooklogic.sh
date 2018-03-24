@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /code/scripts
+cd /code
 
 python manage.py fetchhooklogic
