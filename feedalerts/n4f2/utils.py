@@ -65,6 +65,7 @@ def create_time_settings_json():
         'utcTimeFormat': '%Y-%m-%dT%H:%M:%SZ',
         'pacific': timezone('US/Pacific'),
         'now': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 1),
+        'late': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 2),
         'dontReport': datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 30),
         'localtime': time.strftime('%a %b %d %Y %H:%M:%S'),
     }
@@ -82,6 +83,8 @@ def parse_api_response(feed_json, time_settings):
     i = 0
     while i < len(feed_json):
         if feed_json[i]['siteName'].startswith('ZZZ') or feed_json[i]['siteName'].startswith('YYY') or feed_json[i]['siteName'].startswith('Storre'):
+            i += 1
+        elif format_date_response(feed_json[i]['lastReceived']) >= datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days = 90):
             i += 1
         else:
             feedName, feedProfile = feed_json[i]['feedName'].split(' using profile ')
@@ -104,6 +107,7 @@ def parse_api_response(feed_json, time_settings):
             i += 1
 
     return feed_runs
+
 '''
 begin legacy methods for bulk import of site and profile data from Feed Herder
 

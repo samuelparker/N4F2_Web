@@ -23,7 +23,7 @@ class Command(BaseCommand):
             status_summary = hl_feed_response['statusSummary'],
             run_link = 'https://portal.richrelevance.com/rrfeedherder/result.jsp?runId=' + str(hl_feed_response['runId']),
             console_link = 'https://portal.richrelevance.com/rrfeedherder/api/feed/output/' + str(hl_feed_response['runId']),
-            notification_sent = False
+            notification_sent = False,
             feed_profile = FeedProfile.objects.get(name="hooklogic")
         )
 
