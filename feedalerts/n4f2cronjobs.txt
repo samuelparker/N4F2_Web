@@ -14,3 +14,5 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
 #
 35 * * * * root /code/hooklogic.sh
+25 6 * * * root /code/remove_old_runs.sh
+
