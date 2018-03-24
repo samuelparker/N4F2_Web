@@ -23,6 +23,9 @@ def add_feed_runs_to_db(feed_run_report):
                     if fr.last_success == None or fr.last_success < feed_run[key]['lastSuccess']:
                         fr.last_success = feed_run[key]['lastSuccess']
                         fr.save()
+                    if fr.status_code == 'UNFINISHED' and feed_run[key]['statusCode'] != 'UNFINISHED':
+                        fr.status_code = feed_run[key]['statusCode']
+                        fr.save()
                 except FeedRun.DoesNotExist:    
                     fr = FeedRun(id = key,
                         name = feed_run[key]['feedName'],
