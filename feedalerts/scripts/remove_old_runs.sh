@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /code
+cd /code/scripts
 
 python manage.py removeoldruns
