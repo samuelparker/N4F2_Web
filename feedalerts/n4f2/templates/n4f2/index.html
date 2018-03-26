@@ -67,14 +67,16 @@
                         <th>Site Name</th>
                         <th>Feed Date</th>
                         <th>Status Message</th>
+                        <th>Time Since Last Feed</th>
                     </tr>
             {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE_LATE" and feed.last_received >= feed_run_report.time_settings.dontReport %}
+                {% if feed.status_code == "COMPLETE" and feed.last_received >= feed_run_report.time_settings.dontReport and feed.last_received <= feed_run_report.time_settings.late %}
                     <tr class="delayed">
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</center></td>
                         <td><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
                         <td><center>{{ feed.last_received }}</center></td>
                         <td><center>{{ feed.status_code }}</center></td>
+                        <td><center>{{ feed.last_received|timesince }}</center></td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -90,7 +92,7 @@
                         <th>Status Message</th>
                     </tr>
             {% for feed in feedruns %}
-                {% if feed.status_code == "COMPLETE" and feed.last_received >= feed_run_report.time_settings.dontReport %}
+                {% if feed.status_code == "COMPLETE" and feed.last_received >= feed_run_report.time_settings.dontReport and feed.last_received >= feed_run_report.time_settings.late %}
                     <tr class="ok">
                         <td><center><a href= {{ feed.run_link }} target="_blank">{{ feed.id }}</center></td>
                         <td><center><strong>{{ feed.feed_profile.site.name }}</strong><br>Using Feed Profile:&nbsp;{{ feed.feed_profile.name }}</center></td>
