@@ -14,7 +14,7 @@ def index(request):
         return HttpResponse(feed_run_report)
     else:
         utils.add_feed_runs_to_db(feed_run_report)
-        feedruns = FeedRun.objects.order_by("feed_profile__name", "-last_received").distinct("feed_profile__name")
+        feedruns = FeedRun.objects.filter(feed_profile__watched=True).order_by("feed_profile__name", "-last_received").distinct("feed_profile__name")
         hooklogicruns = FeedRun.objects.filter(feed_profile__name="hooklogic").order_by("-last_received")
         context = {
             'feedruns': feedruns, 
