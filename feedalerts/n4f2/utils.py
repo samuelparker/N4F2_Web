@@ -46,6 +46,7 @@ def watch_profiles(list_of_profile_ids):
             profile = FeedProfile.objects.get(pk = profile_id)
             if profile.watched == False:
                 profile.watched = True
+                profile.save()
         except FeedProfile.DoesNotExist:
             print("Could not find FeedProfile ID: " + str(profile_id))
             
