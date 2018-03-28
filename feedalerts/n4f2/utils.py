@@ -39,6 +39,17 @@ def add_feed_runs_to_db(feed_run_report):
                     )
                     fr.save()
 
+
+def watch_profiles(list_of_profile_ids):
+    for profile_id in list_of_profile_ids:
+        try:
+            profile = FeedProfile.objects.get(pk = profile_id)
+            if profile.watched == False:
+                profile.watched = True
+                profile.save()
+        except FeedProfile.DoesNotExist:
+            print("Could not find FeedProfile ID: " + str(profile_id))
+            
        
 def create_feed_run_report():
     feed_json = fetch_feed_status()
